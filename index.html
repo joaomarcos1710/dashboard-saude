@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JM · Dashboard Saúde & Performance v8</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+:root {
+  --navy:#1b263b; --olive:#556b2f; --olive-light:#6d8a3e;
+  --bg:#f0f2f5; --white:#ffffff; --bg-2:#f0f2f5; --bg-3:#e8ecf0;
+  --text-h:#1b263b; --text-b:#4a4a4a; --text-m:#6b7280; --text-l:#9ca3af;
+  --border:#e2e6eb; --border2:#d0d5dd;
+  --ok:#2d7a47; --ok-bg:#f0faf4; --ok-border:#a8d5b5;
+  --warn:#a16207; --warn-bg:#fffbeb; --warn-border:#fcd34d;
+  --crit:#b91c1c; --crit-bg:#fef2f2; --crit-border:#fca5a5;
+  --info:#1d4ed8; --info-bg:#eff6ff; --info-border:#bfdbfe;
+  --accent:#556b2f; --accent-bg:#f3f6ee;
+  --swim:#0e7490; --swim-bg:#ecfeff; --swim-border:#a5f3fc;
+  --gym:#7c3aed; --gym-bg:#f5f3ff; --gym-border:#c4b5fd;
+  --radius:18px; --radius-sm:10px; --card-r:18px;
+  --shadow:0 2px 8px rgba(27,38,59,.07),0 6px 20px rgba(27,38,59,.05);
+  --shadow-h:0 4px 16px rgba(27,38,59,.13),0 12px 32px rgba(27,38,59,.08);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text-b);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.5}
+
+/* ── HEADER ── */
+.header{background:var(--navy);padding:22px 28px 24px;margin-bottom:0}
+.header-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.header-logo{display:flex;align-items:center;gap:12px}
+.logo-mark{width:44px;height:44px;border-radius:11px;background:var(--olive);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:#fff;flex-shrink:0}
+.header-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;color:#fff;line-height:1}
+.header-sub{font-size:10px;color:#64748b;letter-spacing:.05em;margin-top:2px}
+.score-ring-wrap{display:flex;align-items:center;gap:10px}
+.score-ring{width:52px;height:52px;position:relative;flex-shrink:0}
+.score-ring svg{transform:rotate(-90deg)}
+.score-ring-bg{fill:none;stroke:rgba(255,255,255,.12);stroke-width:5}
+.score-ring-fill{fill:none;stroke-width:5;stroke-linecap:round;transition:stroke-dashoffset 1.2s ease}
+.score-ring-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.score-ring-n{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:#fff;line-height:1}
+.score-ring-t{font-size:8px;color:#94a3b8;letter-spacing:.05em}
+.score-meta-title{font-size:10px;font-weight:700;color:#94a3b8;letter-spacing:.08em;text-transform:uppercase}
+.score-meta-sub{font-size:11px;color:#64748b;margin-top:1px}
+
+/* Hero grid 6 cards */
+.hero-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px}
+.hero-card{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:14px 16px;transition:background .2s}
+.hero-card:hover{background:rgba(255,255,255,.11)}
+.hero-card.hg-alert{background:rgba(185,28,28,.25);border-color:rgba(252,165,165,.3)}
+.hero-card.hg-countdown{background:var(--olive);border-color:rgba(255,255,255,.2)}
+.hg-label{font-size:9px;font-weight:700;letter-spacing:.10em;color:#64748b;text-transform:uppercase;display:flex;align-items:center;gap:5px;margin-bottom:6px}
+.hg-countdown .hg-label{color:rgba(255,255,255,.65)}
+.hg-value{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:#fff;line-height:1.1;display:flex;align-items:baseline;gap:5px}
+.hg-unit{font-size:11px;font-weight:500;color:#94a3b8}
+.hg-countdown .hg-unit{color:rgba(255,255,255,.7)}
+.hg-sub{font-size:11px;color:#64748b;margin-top:4px;display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.hg-countdown .hg-sub{color:rgba(255,255,255,.75)}
+.hg-delta-ok{color:#4ade80;font-weight:600}
+.hg-delta-warn{color:#fbbf24;font-weight:600}
+.hg-delta-crit{color:#f87171;font-weight:600}
+.pulse-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;display:inline-block;flex-shrink:0;animation:pulse-anim 2s infinite}
+@keyframes pulse-anim{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+.hg-progress{margin-top:7px;height:3px;background:rgba(255,255,255,.18);border-radius:2px;overflow:hidden}
+.hg-progress-fill{height:100%;border-radius:2px;background:rgba(255,255,255,.75);transition:width 1s ease}
+
+/* ── TABS ── */
+.main-tabs{display:flex;background:var(--white);border-bottom:2px solid var(--border);padding:0 28px;position:sticky;top:0;z-index:200;box-shadow:0 2px 8px rgba(27,38,59,.06);overflow-x:auto}
+.main-tab{padding:12px 15px;font-size:12px;font-weight:500;letter-spacing:.04em;color:var(--text-m);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:all .2s;user-select:none}
+.main-tab:hover{color:var(--navy)}
+.main-tab.active{color:var(--navy);border-bottom-color:var(--olive);font-weight:600}
+.main-tab.swim-tab.active{border-bottom-color:var(--swim);color:var(--swim)}
+.main-tab.gym-tab.active{border-bottom-color:var(--gym);color:var(--gym)}
+
+/* ── PAGES ── */
+.page{display:none;padding:24px 28px 56px;animation:fadeIn .2s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── GRIDS ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px}
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:14px}
+
+/* ── SECTION TITLE ── */
+.section-title{font-family:'Syne',sans-serif;font-size:11px;font-weight:700;letter-spacing:.09em;color:var(--navy);text-transform:uppercase;margin:24px 0 12px;display:flex;align-items:center;gap:10px}
+.section-title::before{content:'';width:4px;height:14px;background:var(--olive);border-radius:2px;flex-shrink:0}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.section-title.swim-st::before{background:var(--swim)}
+.section-title.gym-st::before{background:var(--gym)}
+
+/* ── CARD ── */
+.card{background:var(--white);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);transition:transform .2s,box-shadow .2s;margin-bottom:0}
+.card:hover{transform:translateY(-2px);box-shadow:var(--shadow-h)}
+.card-label{font-size:10px;font-weight:600;letter-spacing:.09em;color:var(--text-l);text-transform:uppercase;margin-bottom:8px}
+.card-value{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;color:var(--navy);line-height:1}
+.card-value.olive{color:var(--olive)}
+.card-value.warn-c{color:var(--warn)}
+.card-value.crit-c{color:var(--crit)}
+.card-value.swim-c{color:var(--swim)}
+.card-value.gym-c{color:var(--gym)}
+.card-sub{font-size:11px;color:var(--text-m);margin-top:5px}
+.card-delta{font-size:11px;margin-top:5px;font-weight:600;display:flex;align-items:center;gap:4px}
+.trend-up{color:var(--ok)} .trend-down{color:var(--crit)} .trend-warn{color:var(--warn)} .trend-neutral{color:var(--text-m)}
+
+/* ── BADGE ── */
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:9px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.b-ok{background:var(--ok-bg);color:var(--ok);border:1px solid var(--ok-border)}
+.b-warn{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-border)}
+.b-crit{background:var(--crit-bg);color:var(--crit);border:1px solid var(--crit-border)}
+.b-info{background:var(--info-bg);color:var(--info);border:1px solid var(--info-border)}
+.b-navy{background:var(--navy);color:#fff}
+.b-olive{background:var(--olive);color:#fff}
+.b-gray{background:var(--bg-2);color:var(--text-m);border:1px solid var(--border)}
+.b-swim{background:var(--swim-bg);color:var(--swim);border:1px solid var(--swim-border)}
+.b-gym{background:var(--gym-bg);color:var(--gym);border:1px solid var(--gym-border)}
+
+/* ── ALERT CARD ── */
+.alert-card{display:flex;gap:0;border-radius:var(--radius-sm);overflow:hidden;margin-bottom:9px;box-shadow:var(--shadow)}
+.alert-card .ac-stripe{width:5px;flex-shrink:0}
+.alert-card.ac-crit .ac-stripe{background:var(--crit)}
+.alert-card.ac-warn .ac-stripe{background:var(--warn)}
+.alert-card.ac-info .ac-stripe{background:var(--info)}
+.alert-card.ac-ok  .ac-stripe{background:var(--ok)}
+.alert-card .ac-body{padding:11px 14px;flex:1;background:var(--white)}
+.alert-card.ac-crit .ac-body{background:var(--crit-bg)}
+.alert-card.ac-warn .ac-body{background:var(--warn-bg)}
+.alert-card.ac-info .ac-body{background:var(--info-bg)}
+.alert-card.ac-ok  .ac-body{background:var(--ok-bg)}
+.ac-header{display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap}
+.ac-title{font-size:12px;font-weight:700;color:var(--navy)}
+.ac-meta{font-size:11px;color:var(--text-m);margin-bottom:5px;line-height:1.5}
+.ac-coach{font-size:10px;font-weight:600;letter-spacing:.04em;color:var(--text-l);border-top:1px dashed var(--border);padding-top:5px;margin-top:5px}
+.ac-coach span{font-weight:700;color:var(--navy)}
+
+/* ── PROGRESS ── */
+.prog-row{margin-bottom:10px}
+.prog-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text-m);margin-bottom:4px}
+.prog-label span:last-child{font-weight:600;color:var(--navy)}
+.prog-track{height:8px;background:var(--bg-2);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;border-radius:4px;transition:width 1s ease}
+.pf-ok{background:linear-gradient(90deg,var(--olive),#7da542)}
+.pf-warn{background:linear-gradient(90deg,#d97706,#fbbf24)}
+.pf-crit{background:linear-gradient(90deg,#dc2626,#ef4444)}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;margin-bottom:14px;border-radius:var(--radius-sm);box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{padding:9px 12px;text-align:left;font-size:10px;letter-spacing:.06em;font-weight:700;color:#fff;background:var(--navy);text-transform:uppercase}
+tbody td{padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text-b);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:var(--bg)}
+.td-h{color:var(--navy)!important;font-weight:600} .td-mono{font-family:monospace}
+.tr-ok td:first-child{border-left:3px solid var(--ok)}
+.tr-warn td:first-child{border-left:3px solid var(--warn)}
+.tr-crit td:first-child{border-left:3px solid var(--crit)}
+
+/* ── CHART BOX ── */
+.chart-box{background:var(--white);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);margin-bottom:16px}
+.chart-label{font-size:10px;font-weight:700;letter-spacing:.09em;color:var(--text-l);text-transform:uppercase;margin-bottom:11px;display:flex;align-items:center;gap:6px}
+.chart-label::before{content:'';width:3px;height:12px;background:var(--olive);border-radius:2px;flex-shrink:0}
+
+/* ── METRIC ROW ── */
+.mrow{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}
+.mrow:last-child{border-bottom:none}
+.mrow-k{color:var(--text-m)} .mrow-v{color:var(--navy);font-weight:600;display:flex;align-items:center;gap:6px}
+
+/* ── TREINO CARD ── */
+.t-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;box-shadow:var(--shadow);display:grid;grid-template-columns:48px 1fr auto;gap:10px;align-items:center;transition:transform .18s,box-shadow .18s}
+.t-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-h)}
+.t-n{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--bg-3);text-align:center}
+.t-name{font-size:13px;font-weight:600;color:var(--navy)}
+.t-date{font-size:10px;color:var(--text-l);margin-top:1px}
+.t-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.t-stats{display:flex;gap:10px}
+.ts{text-align:right}
+.ts-v{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--navy)}
+.ts-l{font-size:9px;color:var(--text-l);letter-spacing:.05em;margin-top:1px}
+
+/* ── HEATMAP ── */
+.heatmap-wrap{background:var(--white);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);margin-bottom:16px;overflow-x:auto}
+.heatmap-title{font-size:10px;font-weight:700;letter-spacing:.09em;color:var(--text-l);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.heatmap-title::before{content:'';width:3px;height:12px;background:var(--olive);border-radius:2px}
+.heatmap-grid-wrap{display:flex;gap:6px;align-items:flex-start}
+.heatmap-days{display:flex;flex-direction:column;gap:2px;padding-top:2px}
+.hm-day-label{font-size:9px;color:var(--text-l);height:13px;display:flex;align-items:center}
+.heatmap-weeks{display:flex;gap:2px}
+.hm-week{display:flex;flex-direction:column;gap:2px}
+.hm-cell{width:13px;height:13px;border-radius:2px;cursor:pointer;transition:transform .1s;position:relative}
+.hm-cell:hover{transform:scale(1.3);z-index:10}
+.hm-cell[data-tip]:hover::after{content:attr(data-tip);position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;font-size:10px;padding:3px 7px;border-radius:4px;white-space:nowrap;pointer-events:none;z-index:100}
+.hm-0{background:var(--bg-2)} .hm-1{background:#c6e3b0} .hm-2{background:#8cba6e} .hm-3{background:#556b2f} .hm-4{background:#2d3d18}
+.hm-legend{display:flex;align-items:center;gap:5px;margin-top:8px;justify-content:flex-end}
+.hm-legend span{font-size:10px;color:var(--text-l)}
+
+/* ── SHOE ── */
+.shoe-card{background:var(--white);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);margin-bottom:14px}
+.shoe-item{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.shoe-item:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.shoe-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.shoe-name{font-size:13px;font-weight:600;color:var(--navy)}
+.shoe-km{font-family:'Syne',sans-serif;font-size:18px;font-weight:800}
+.shoe-track{height:8px;background:var(--bg-2);border-radius:4px;overflow:hidden;margin-bottom:4px}
+.shoe-fill{height:100%;border-radius:4px;transition:width 1s ease}
+.shoe-meta{font-size:10px;color:var(--text-m)}
+
+/* ── NEXT WORKOUT ── */
+.next-card{background:linear-gradient(135deg,var(--olive),#6d8a3e);border-radius:var(--radius);padding:18px 22px;color:#fff;margin-bottom:16px}
+.next-label{font-size:9px;letter-spacing:.1em;opacity:.75;text-transform:uppercase}
+.next-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;margin-top:4px}
+.next-meta{font-size:11px;opacity:.85;margin-top:6px;display:flex;gap:14px;flex-wrap:wrap}
+
+/* ── ACWR ZONES ── */
+.acwr-zones{display:flex;gap:14px;margin-top:8px;flex-wrap:wrap}
+.acwr-zone{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-m)}
+.acwr-dot{width:8px;height:8px;border-radius:2px}
+
+/* ── SCORE RING (InBody) ── */
+.score-wrap{display:flex;align-items:center;gap:12px}
+.inbody-ring{width:64px;height:64px;position:relative;flex-shrink:0}
+.inbody-ring svg{transform:rotate(-90deg)}
+.inbody-ring-bg{fill:none;stroke:#e9ecef;stroke-width:6}
+.inbody-ring-fill{fill:none;stroke-width:6;stroke-linecap:round}
+.inbody-ring-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.inbody-ring-n{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--navy);line-height:1}
+.inbody-ring-t{font-size:8px;color:var(--text-l)}
+
+/* ── DETAILS ── */
+details{background:var(--white);border-radius:var(--radius-sm);box-shadow:var(--shadow);overflow:hidden;margin-top:10px}
+summary{padding:14px 18px;font-weight:600;font-size:12px;cursor:pointer;color:var(--navy);letter-spacing:.04em;list-style:none;display:flex;align-items:center;gap:8px;user-select:none}
+summary::before{content:'▶';font-size:9px;color:var(--text-l);transition:transform .2s}
+details[open] summary::before{transform:rotate(90deg)}
+.details-body{padding:0 18px 16px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){.hero-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:900px){
+  .header{padding:14px 16px}
+  .hero-grid{grid-template-columns:repeat(3,1fr)}
+  .main-tabs{padding:0 14px}
+  .page{padding:14px 14px 48px}
+  .grid2,.grid3,.grid4,.grid5{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .hero-grid{grid-template-columns:repeat(2,1fr)}
+  .grid2,.grid3,.grid4,.grid5{grid-template-columns:1fr}
+  .card-value{font-size:22px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<div class="header">
+  <div class="header-top">
+    <div class="header-logo">
+      <div class="logo-mark">JM</div>
+      <div>
+        <div class="header-title">JOÃO MARCOS BOMFIM</div>
+        <div class="header-sub">42 ANOS · 1,81M · RIO DE JANEIRO · GARMIN FORERUNNER 965</div>
+      </div>
+    </div>
+    <div class="score-ring-wrap">
+      <div class="score-ring">
+        <svg viewBox="0 0 52 52" width="52" height="52">
+          <circle class="score-ring-bg" cx="26" cy="26" r="22"/>
+          <circle class="score-ring-fill" id="scoreRingFill" cx="26" cy="26" r="22" stroke="#4ade80" stroke-dasharray="138.2" stroke-dashoffset="138.2"/>
+        </svg>
+        <div class="score-ring-label">
+          <div class="score-ring-n" id="scoreVal">—</div>
+          <div class="score-ring-t">SCORE</div>
+        </div>
+      </div>
+      <div>
+        <div class="score-meta-title">Performance</div>
+        <div class="score-meta-sub" id="scoreLabel">Calculando…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero 6 cards -->
+  <div class="hero-grid">
+    <div class="hero-card">
+      <div class="hg-label">📅 DATA DE HOJE</div>
+      <div class="hg-value" id="hDataValor">—</div>
+      <div class="hg-sub" id="hDataSub">—</div>
+    </div>
+    <div class="hero-card">
+      <div class="hg-label">⚖️ PESO ATUAL</div>
+      <div class="hg-value">90,7<span class="hg-unit">kg</span></div>
+      <div class="hg-sub"><span class="hg-delta-ok">▼ −11,1 kg</span> desde ago/25 · meta 85</div>
+    </div>
+    <div class="hero-card">
+      <div class="hg-label">💪 % GORDURA</div>
+      <div class="hg-value">23,3<span class="hg-unit">%</span></div>
+      <div class="hg-sub"><span class="hg-delta-ok">▼ −4,1 pp</span> desde fev/25 · Alta II</div>
+    </div>
+    <div class="hero-card">
+      <div class="hg-label">❤️ FC REPOUSO</div>
+      <div class="hg-value">51<span class="hg-unit">bpm</span></div>
+      <div class="hg-sub">VO₂max 44 · Limiar 175 bpm</div>
+    </div>
+    <div class="hero-card">
+      <div class="hg-label"><span class="pulse-dot"></span> ÚLTIMO TREINO</div>
+      <div class="hg-value" style="font-size:17px">T19 · 5,95km</div>
+      <div class="hg-sub">24/mar · 7:18/km · PSE 9/10</div>
+    </div>
+    <div class="hero-card hg-countdown">
+      <div class="hg-label">🎯 MEIA MARATONA RIO</div>
+      <div class="hg-value"><span id="diasProva">—</span><span class="hg-unit">dias</span></div>
+      <div class="hg-sub">06 jun 2026 · meta 2h45–3h00</div>
+      <div class="hg-progress"><div class="hg-progress-fill" id="hgProgressFill" style="width:0%"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TABS ══ -->
+<div class="main-tabs">
+  <div class="main-tab active"   onclick="showPage('hoje',this)">📅 HOJE</div>
+  <div class="main-tab"          onclick="showPage('corrida',this)">🏃 CORRIDA</div>
+  <div class="main-tab gym-tab"  onclick="showPage('academia',this)">🏋️ ACADEMIA</div>
+  <div class="main-tab swim-tab" onclick="showPage('natacao',this)">🏊 NATAÇÃO</div>
+  <div class="main-tab"          onclick="showPage('saude',this)">🩺 SAÚDE</div>
+  <div class="main-tab"          onclick="showPage('composicao',this)">⚖️ COMPOSIÇÃO</div>
+  <div class="main-tab"          onclick="showPage('provas',this)">🏅 PROVAS & PRs</div>
+</div>
+
+<!-- ══════════ ABA HOJE ══════════ -->
+<div id="page-hoje" class="page active">
+
+  <div class="next-card">
+    <div class="next-label">🎯 PRÓXIMO TREINO PRESCRITO — CICLO 2 (ABRIL/2026)</div>
+    <div class="next-title">CICLO 1 CONCLUÍDO — AGUARDANDO PRESCRIÇÃO CICLO 2</div>
+    <div class="next-meta">
+      <span>✅ 19/19 treinos prescritos + 4 bônus realizados · 142,3 km acumulados</span>
+      <span>🔄 Ciclo 2 começa em abril · próximo long run ~14 km</span>
+      <span>🏁 Meia Maratona do Rio · 06/jun/2026 · meta 2h45–3h00</span>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div class="card">
+      <div class="card-label">🏃 Corrida — ciclo Meia Maratona</div>
+      <div class="card-value olive">19/19</div>
+      <div class="card-sub">19 treinos + 4 bônus · 142,3 km acumulados</div>
+      <div class="card-delta trend-up">↑ 100% ciclo 1 concluído 🎯</div>
+    </div>
+    <div class="card">
+      <div class="card-label">🏋️ Academia — semana atual</div>
+      <div class="card-value gym-c">3<span style="font-size:13px;color:var(--text-l)"> sessões</span></div>
+      <div class="card-sub">CrossFit + Musculação · meta 3×/sem</div>
+      <div class="card-delta trend-up">↑ No alvo</div>
+    </div>
+    <div class="card">
+      <div class="card-label">⚖️ Peso — 7 dias</div>
+      <div class="card-value warn-c">90,7<span style="font-size:13px;color:var(--text-l)"> kg</span></div>
+      <div class="card-sub">Meta: 85 kg · faltam 5,7 kg</div>
+      <div class="card-delta trend-up">↓ −0,7 kg desde ontem · −1,1 vs sem. passada</div>
+    </div>
+  </div>
+
+  <div class="section-title">CONSISTÊNCIA — ÚLTIMOS 100 DIAS</div>
+  <div class="heatmap-wrap">
+    <div class="heatmap-title">Carga diária de corrida (distância)</div>
+    <div id="heatmapContainer"></div>
+    <div class="hm-legend">
+      <span>Sem treino</span>
+      <div class="hm-cell hm-0" style="cursor:default"></div>
+      <div class="hm-cell hm-1" style="cursor:default"></div>
+      <div class="hm-cell hm-2" style="cursor:default"></div>
+      <div class="hm-cell hm-3" style="cursor:default"></div>
+      <div class="hm-cell hm-4" style="cursor:default"></div>
+      <span>Alta carga</span>
+    </div>
+  </div>
+
+  <div class="section-title">SEMANA ATUAL — 22 A 28 MAR 2026</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>DIA</th><th>DATA</th><th>ATIVIDADE</th><th>STATUS</th></tr></thead>
+      <tbody>
+        <tr class="tr-ok"><td class="td-h">DOM</td><td>22/mar</td><td>🟢 Recuperação ativa (3 dias após long run 12,9 km)</td><td><span class="badge b-ok">DESCANSO</span></td></tr>
+        <tr><td class="td-h">SEG</td><td>23/mar</td><td>Body LJ — CrossFit · Superiores · 1:04:58 · PSE 9</td><td><span class="badge b-gym">MUSCULAÇÃO</span></td></tr>
+        <tr class="tr-ok"><td class="td-h">TER</td><td>24/mar</td><td>🏃 T19 · Run/Walk 5,95 km Z2→Z3 · 47:25 · 7:18/km · FC 132 bpm · PSE 9/10 · 31,1°C</td><td><span class="badge b-ok">CONCLUÍDO</span></td></tr>
+        <tr class="tr-ok"><td class="td-h">QUA</td><td>25/mar</td><td>🟢 Descanso ativo</td><td><span class="badge b-ok">DESCANSO</span></td></tr>
+        <tr><td class="td-h">QUI</td><td>26/mar</td><td>—</td><td><span class="badge b-gray">PENDENTE</span></td></tr>
+        <tr><td class="td-h">SEX</td><td>27/mar</td><td>—</td><td><span class="badge b-gray">PENDENTE</span></td></tr>
+        <tr><td class="td-h">SÁB</td><td>28/mar</td><td>—</td><td><span class="badge b-gray">PENDENTE</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-title">ALERTAS ATIVOS — ORDENADOS POR PRIORIDADE</div>
+  <div id="alertasContainer"></div>
+
+  <div class="section-title">PROGNÓSTICO — MEIA MARATONA 06/JUN/2026</div>
+  <div class="grid2">
+    <div class="card">
+      <div class="card-label">Projeção de tempo</div>
+      <div style="margin-top:8px">
+        <div class="mrow"><span class="mrow-k">Cenário otimista</span><span class="mrow-v"><span class="badge b-ok">2h38–2h45</span></span></div>
+        <div class="mrow"><span class="mrow-k">Cenário realista</span><span class="mrow-v"><span class="badge b-warn">2h45–3h00</span></span></div>
+        <div class="mrow"><span class="mrow-k">Pace alvo de prova</span><span class="mrow-v">7:50–8:30/km</span></div>
+        <div class="mrow"><span class="mrow-k">Temperatura esperada</span><span class="mrow-v" style="color:var(--ok)">18–22°C · 5h30 ✓</span></div>
+        <div class="mrow"><span class="mrow-k">Percurso</span><span class="mrow-v">Leblon → Aterro · plano</span></div>
+        <div class="mrow"><span class="mrow-k">Peso alvo na prova</span><span class="mrow-v"><span class="badge b-olive">85 kg 🎯</span></span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Progressão atual</div>
+      <div style="margin-top:10px">
+        <div class="prog-row"><div class="prog-label"><span>Long run (12,9/21,1 km)</span><span>61%</span></div><div class="prog-track"><div class="prog-fill pf-warn" style="width:61%"></div></div></div>
+        <div class="prog-row"><div class="prog-label"><span>Perda de peso (11,1/16,8 kg)</span><span>66%</span></div><div class="prog-track"><div class="prog-fill pf-warn" style="width:66%"></div></div></div>
+        <div class="prog-row"><div class="prog-label"><span>Ciclo 1 (19/19 concluídos)</span><span>100% ✅</span></div><div class="prog-track"><div class="prog-fill pf-ok" style="width:100%"></div></div></div>
+        <div class="prog-row"><div class="prog-label"><span>Cadência (134/165 ppm)</span><span>81%</span></div><div class="prog-track"><div class="prog-fill pf-warn" style="width:81%"></div></div></div>
+        <div class="prog-row"><div class="prog-label"><span>Período até a prova</span><span id="pctProva">—</span></div><div class="prog-track"><div class="prog-fill pf-crit" id="barProva" style="width:0%"></div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ ABA CORRIDA ══════════ -->
+<div id="page-corrida" class="page">
+
+  <div class="section-title">KPIs DO CICLO — COM TENDÊNCIA</div>
+  <div class="grid5">
+    <div class="card"><div class="card-label">Total km</div><div class="card-value olive">142,3+</div><div class="card-sub">ciclo Meia Maratona · 19+4 treinos</div><div class="card-delta trend-up">↑ 100% prescrito executado</div></div>
+    <div class="card"><div class="card-label">Long run máx</div><div class="card-value olive">12,9<span style="font-size:12px;color:var(--text-l)"> km</span></div><div class="card-sub">T18 · 19/mar/2026</div><div class="card-delta trend-up">↑ +2,9 km vs anterior</div></div>
+    <div class="card"><div class="card-label">FC repouso</div><div class="card-value olive">51<span style="font-size:12px;color:var(--text-l)"> bpm</span></div><div class="card-sub">Nível de atleta treinado</div><div class="card-delta trend-up">↓ −4 bpm vs início do ciclo</div></div>
+    <div class="card"><div class="card-label">Cadência máx</div><div class="card-value olive">165<span style="font-size:12px;color:var(--text-l)"> ppm</span></div><div class="card-sub">T16 · 14/mar · novo máximo</div><div class="card-delta trend-up">↑ +32 ppm vs T1</div></div>
+    <div class="card"><div class="card-label">PSE médio</div><div class="card-value warn-c">6,5<span style="font-size:12px;color:var(--text-l)">/10</span></div><div class="card-sub">Média das últimas 5 sessões</div><div class="card-delta trend-warn">↑ Tendência de alta · monitorar</div></div>
+  </div>
+
+  <div class="section-title">ZONAS DE TREINAMENTO — CONFIRMADAS 17/MAR/2026</div>
+  <div class="grid5">
+    <div class="card"><div class="card-label">Zona 1</div><div class="card-value" style="font-size:18px;color:#22c55e">Z1</div><div class="card-sub"><strong>60%</strong> · 11:00/km · Muito Leve</div></div>
+    <div class="card"><div class="card-label">Zona 2</div><div class="card-value" style="font-size:18px;color:#86efac">Z2</div><div class="card-sub"><strong>70%</strong> · 9:26/km · Leve (Base)</div></div>
+    <div class="card"><div class="card-label">Zona 3</div><div class="card-value" style="font-size:18px;color:#fde047">Z3</div><div class="card-sub"><strong>80%</strong> · 8:15/km · Moderado</div></div>
+    <div class="card"><div class="card-label">Zona 4</div><div class="card-value" style="font-size:18px;color:#fb923c">Z4</div><div class="card-sub"><strong>85–90%</strong> · 7:20–7:46/km · Limiar</div></div>
+    <div class="card"><div class="card-label">Zona 5</div><div class="card-value" style="font-size:18px;color:#f87171">Z5</div><div class="card-sub"><strong>95–100%</strong> · &lt;6:57/km · VO₂max</div></div>
+  </div>
+
+  <div class="section-title">GESTÃO DE CARGA — ACWR</div>
+  <div class="chart-box">
+    <div class="chart-label">Carga aguda (7 dias) vs carga crônica (média 4 semanas) · km</div>
+    <div style="height:220px"><canvas id="chartACWR"></canvas></div>
+    <div class="acwr-zones" style="margin-top:10px">
+      <div class="acwr-zone"><div class="acwr-dot" style="background:#2d7a47"></div>Zona segura (ACWR 0,8–1,3)</div>
+      <div class="acwr-zone"><div class="acwr-dot" style="background:#a16207"></div>Atenção (1,3–1,5)</div>
+      <div class="acwr-zone"><div class="acwr-dot" style="background:#b91c1c"></div>Risco de lesão (&gt;1,5 ou &lt;0,8)</div>
+    </div>
+    <div id="acwrStatus" style="margin-top:10px"></div>
+  </div>
+
+  <div class="section-title">CORRELAÇÃO: PSE ACADEMIA (dia ant.) × FC MÉDIA CORRIDA</div>
+  <div class="chart-box">
+    <div class="chart-label">Scatter — PSE academia D-1 vs FC média corrida (bpm)</div>
+    <div style="height:220px"><canvas id="chartCorrelacao"></canvas></div>
+    <div style="font-size:10px;color:var(--text-m);margin-top:8px">⚠️ Dados parciais — pontos reais onde há registro de academia no dia anterior ao treino de corrida.</div>
+  </div>
+
+  <div class="section-title">ODÔMETRO DE SAPATILHAS</div>
+  <div id="shoeOdometer"></div>
+
+  <div class="section-title">TODOS OS TREINOS — CICLO MEIA MARATONA</div>
+  <div id="lista-treinos"></div>
+
+  <div class="grid2">
+    <div class="chart-box"><div class="chart-label">Volume por treino (km)</div><div style="height:190px"><canvas id="chartVolume"></canvas></div></div>
+    <div class="chart-box"><div class="chart-label">PSE ao longo do ciclo</div><div style="height:190px"><canvas id="chartSensacao"></canvas></div></div>
+  </div>
+  <div class="grid2">
+    <div class="chart-box"><div class="chart-label">Cadência por treino (ppm)</div><div style="height:160px"><canvas id="chartCadencia"></canvas></div></div>
+    <div class="chart-box"><div class="chart-label">Contato com solo (ms)</div><div style="height:160px"><canvas id="chartContato"></canvas></div></div>
+  </div>
+  <div class="chart-box">
+    <div class="chart-label">Scatter — Temperatura (°C) vs FC Média (bpm)</div>
+    <div style="height:240px"><canvas id="chartScatter"></canvas></div>
+    <div style="display:flex;gap:12px;margin-top:8px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-m)"><div style="width:8px;height:8px;border-radius:50%;background:#2d7a47"></div>FC &lt;130 bpm (Z2)</div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-m)"><div style="width:8px;height:8px;border-radius:50%;background:#a16207"></div>FC 130–145 bpm (Z3)</div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-m)"><div style="width:8px;height:8px;border-radius:50%;background:#b91c1c"></div>FC &gt;145 bpm (acima)</div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="chart-box"><div class="chart-label">FC nos long runs (média e máxima)</div><div style="height:160px"><canvas id="chartFC"></canvas></div></div>
+    <div class="chart-box"><div class="chart-label">Progressão dos intervalados</div><div style="height:160px"><canvas id="chartTiros"></canvas></div></div>
+  </div>
+  <div class="section-title">ADAPTAÇÃO CARDIOVASCULAR</div>
+  <div class="grid3">
+    <div class="card"><div class="card-label">FC repouso</div><div class="card-value olive">51<span style="font-size:12px;color:var(--text-l)"> bpm</span></div><div class="card-sub">Nível de atleta</div><div class="card-delta trend-up">↓ Tendência de queda ✓</div></div>
+    <div class="card"><div class="card-label">FC recuperação</div><div class="card-value olive">22<span style="font-size:12px;color:var(--text-l)"> bpm/min</span></div><div class="card-sub">Excelente · &gt;20 bpm = atleta</div></div>
+    <div class="card"><div class="card-label">Limiar lactato</div><div class="card-value">175<span style="font-size:12px;color:var(--text-l)"> bpm</span></div><div class="card-sub">5:40/km · referência prova</div></div>
+  </div>
+</div>
+
+<!-- ══════════ ABA ACADEMIA ══════════ -->
+<div id="page-academia" class="page">
+  <div class="section-title gym-st">RESUMO SEMANAL</div>
+  <div class="grid4">
+    <div class="card"><div class="card-label">Sessões esta semana</div><div class="card-value gym-c">3<span style="font-size:12px;color:var(--text-l)"> /3</span></div><div class="card-sub">Meta atingida ✅</div><div class="card-delta trend-up">↑ No alvo</div></div>
+    <div class="card"><div class="card-label">Sessões acumuladas</div><div class="card-value gym-c">—</div><div class="card-sub">Aguardando histórico completo</div></div>
+    <div class="card"><div class="card-label">Tipo predominante</div><div class="card-value" style="font-size:16px;color:var(--gym)">CrossFit</div><div class="card-sub">+ Musculação complementar</div></div>
+    <div class="card"><div class="card-label">Creatina</div><div class="card-value gym-c">3g<span style="font-size:12px;color:var(--text-l)"> /dia</span></div><div class="card-sub">Pós-treino · prescrição nutricionista</div></div>
+  </div>
+  <div class="section-title gym-st">LOG DE SESSÕES</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>DATA</th><th>TIPO</th><th>FOCO</th><th>DURAÇÃO</th><th>PSE</th><th>STATUS</th></tr></thead>
+      <tbody>
+        <tr><td>23/03/2026</td><td>CrossFit</td><td>Superiores</td><td>1:04:58</td><td>9</td><td>✓ Completo</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="section-title gym-st">PRs DE FORÇA</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>EXERCÍCIO</th><th>PR ATUAL</th><th>DATA PR</th><th>SÉRIE</th></tr></thead>
+      <tbody>
+        <tr><td class="td-h">Agachamento livre</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td class="td-h">Supino</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td class="td-h">Levantamento terra</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td class="td-h">Remada</td><td>—</td><td>—</td><td>—</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════ ABA NATAÇÃO ══════════ -->
+<div id="page-natacao" class="page">
+  <div class="section-title swim-st">RESUMO GERAL</div>
+  <div class="grid4">
+    <div class="card"><div class="card-label">Total sessões</div><div class="card-value swim-c">—</div><div class="card-sub">Aguardando dados</div></div>
+    <div class="card"><div class="card-label">Total metros</div><div class="card-value swim-c">—</div><div class="card-sub">Acumulado</div></div>
+    <div class="card"><div class="card-label">Melhor pace</div><div class="card-value swim-c">—<span style="font-size:12px;color:var(--text-l)">/100m</span></div><div class="card-sub">—</div></div>
+    <div class="card"><div class="card-label">Frequência</div><div class="card-value swim-c">—<span style="font-size:12px;color:var(--text-l)">×/sem</span></div><div class="card-sub">Média semanal</div></div>
+  </div>
+  <div class="section-title swim-st">LOG DE SESSÕES</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>DATA</th><th>TIPO</th><th>DISTÂNCIA</th><th>TEMPO</th><th>PACE/100m</th><th>FC</th><th>PSE</th></tr></thead>
+      <tbody>
+        <tr style="background:var(--swim-bg)"><td colspan="7" style="text-align:center;color:var(--swim);padding:20px;font-size:11px;font-style:italic">Nenhuma sessão registrada ainda</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ══════════ ABA SAÚDE ══════════ -->
+<div id="page-saude" class="page">
+  <div class="section-title">HIDRATAÇÃO</div>
+  <div class="grid3">
+    <div class="card"><div class="card-label">Maior perda registrada</div><div class="card-value warn-c">1.494<span style="font-size:12px;color:var(--text-l)"> ml</span></div><div class="card-sub">T15 · 08/mar · 33,3°C</div></div>
+    <div class="card"><div class="card-label">Perda na prova oficial</div><div class="card-value">1.241<span style="font-size:12px;color:var(--text-l)"> ml</span></div><div class="card-sub">Circuito Caixa · 31°C · 10 km</div></div>
+    <div class="card"><div class="card-label">Meta diária</div><div class="card-value olive">3,5<span style="font-size:12px;color:var(--text-l)"> L</span></div><div class="card-sub">+500ml/hora de treino · diurético ativo</div></div>
+  </div>
+  <div class="section-title">BETA-TALASSEMIA MINOR</div>
+  <div style="background:var(--crit-bg);border-left:4px solid var(--crit);border-radius:var(--radius-sm);padding:12px 16px;font-size:12px;color:#7f1d1d;margin-bottom:12px">🧬 <strong>Beta-talassemia minor (traço)</strong> — VO₂max estruturalmente 5–10% menor. Usar FC como guia principal na prova. <strong>NÃO suplementar ferro</strong> (ferritina 486 µg/L, acima do ref).</div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>MARCADOR</th><th>JUN/24</th><th>NOV/25</th><th>JAN/26</th><th>REFERÊNCIA</th><th>STATUS</th></tr></thead>
+    <tbody>
+      <tr class="tr-crit"><td>Hemoglobina (g/dL)</td><td>12,6</td><td>12,6</td><td class="td-h">12,2</td><td>&gt;13,0</td><td><span class="badge b-crit">BAIXO CRÔNICO</span></td></tr>
+      <tr class="tr-crit"><td>VCM (fL)</td><td>60,7</td><td>60,3</td><td class="td-h">60,3</td><td>83–101</td><td><span class="badge b-crit">MICROCITOSE</span></td></tr>
+      <tr class="tr-warn"><td>Eritrócitos (M/µL)</td><td>6,52</td><td>6,63</td><td class="td-h">6,75</td><td>4,5–5,9</td><td><span class="badge b-warn">COMPENSAÇÃO</span></td></tr>
+      <tr class="tr-crit"><td>RDW (%)</td><td>15,9</td><td>17,0</td><td class="td-h">17,9</td><td>&lt;14,5</td><td><span class="badge b-crit">CRESCENDO ⚠</span></td></tr>
+      <tr class="tr-crit"><td>Ferritina (µg/L)</td><td>423</td><td>390</td><td class="td-h">486</td><td>26–446</td><td><span class="badge b-crit">ACIMA · NÃO SUPL. FERRO</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="section-title">RISCO METABÓLICO</div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>MARCADOR</th><th>JUN/24</th><th>NOV/25</th><th>JAN/26</th><th>REFERÊNCIA</th><th>TENDÊNCIA</th><th>STATUS</th></tr></thead>
+    <tbody>
+      <tr class="tr-crit"><td>Ácido úrico (mg/dL)</td><td>7,1</td><td>6,5</td><td class="td-h">7,8</td><td>&lt;7,0</td><td>🔴 Subindo</td><td><span class="badge b-crit">RISCO GOTA</span></td></tr>
+      <tr class="tr-warn"><td>HOMA-IR</td><td>1,92</td><td>3,2</td><td class="td-h">2,9</td><td>&lt;2,71</td><td>🟡 Melhorou</td><td><span class="badge b-warn">RESIST. LEVE</span></td></tr>
+      <tr class="tr-warn"><td>Insulina (mU/L)</td><td>9,3</td><td>15,0</td><td class="td-h">14,0</td><td>2–13</td><td>🟡 Alta</td><td><span class="badge b-warn">MONITORAR</span></td></tr>
+      <tr class="tr-crit"><td>Triglicerídeos (mg/dL)</td><td>112</td><td>103</td><td class="td-h">151</td><td>&lt;150</td><td>🔴 Subiu</td><td><span class="badge b-crit">ACIMA LIMITE</span></td></tr>
+      <tr class="tr-crit"><td>HDL (mg/dL)</td><td>36</td><td>32</td><td class="td-h">32</td><td>&gt;40</td><td>🔴 Persistente</td><td><span class="badge b-crit">RISCO CARDIO</span></td></tr>
+      <tr class="tr-ok"><td>LDL (mg/dL)</td><td>116</td><td>97</td><td class="td-h">99</td><td>&lt;130</td><td>🟢 Estável</td><td><span class="badge b-ok">NORMAL</span></td></tr>
+      <tr class="tr-warn"><td>PCR (mg/dL)</td><td>—</td><td>0,46</td><td class="td-h">0,33</td><td>&lt;0,3</td><td>🟡 Melhorou</td><td><span class="badge b-warn">INTERMEDIÁRIO</span></td></tr>
+      <tr class="tr-ok"><td>HbA1c (%)</td><td>5,2</td><td>5,1</td><td class="td-h">5,2</td><td>&lt;5,7</td><td>🟢 Estável</td><td><span class="badge b-ok">NORMAL</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="section-title">HORMÔNIOS E VITAMINAS</div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>MARCADOR</th><th>JUN/24</th><th>NOV/25</th><th>JAN/26</th><th>REFERÊNCIA</th><th>STATUS</th></tr></thead>
+    <tbody>
+      <tr class="tr-ok"><td>Testosterona total (ng/dL)</td><td>544</td><td>472</td><td class="td-h">563</td><td>300–1000</td><td><span class="badge b-ok">BOA · SUBIU</span></td></tr>
+      <tr class="tr-ok"><td>Cortisol (µg/dL)</td><td>18,3</td><td>15,7</td><td class="td-h">16,7</td><td>6–23</td><td><span class="badge b-ok">NORMAL</span></td></tr>
+      <tr class="tr-warn"><td>Vitamina D (ng/mL)</td><td>33,8</td><td>19,0</td><td class="td-h">28,0</td><td>40–60 atleta</td><td><span class="badge b-warn">INSUFICIENTE</span></td></tr>
+      <tr class="tr-ok"><td>Vitamina B12 (ng/L)</td><td>960</td><td>548</td><td class="td-h">619</td><td>200–900</td><td><span class="badge b-ok">NORMAL</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="section-title">MEDICAMENTOS</div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>MEDICAMENTO</th><th>INDICAÇÃO</th><th>POSOLOGIA</th><th>IMPACTO NO TREINO</th><th>STATUS</th></tr></thead>
+    <tbody>
+      <tr class="tr-warn"><td><strong>Neblock 5mg</strong><br><span style="font-size:10px;color:var(--text-l)">Nebivolol</span></td><td>Hipertensão</td><td>1cp/dia · manhã</td><td>⚠️ Limita FC máxima. Monitorar por PSE</td><td><span class="badge b-warn">ATENÇÃO</span></td></tr>
+      <tr class="tr-warn"><td><strong>Acertalix 5/1,25mg</strong><br><span style="font-size:10px;color:var(--text-l)">Ramipril + Hidroclorotiazida</span></td><td>Hipertensão</td><td>1cp/dia · manhã</td><td>⚠️ Diurético — hidratar sempre</td><td><span class="badge b-warn">HIDRATAR +</span></td></tr>
+      <tr class="tr-warn"><td><strong>Tirzepatida 10mg</strong><br><span style="font-size:10px;color:var(--text-l)">Mounjaro · GLP-1</span></td><td>Peso / Glicemia</td><td>1×/sem · SC</td><td>⚠️ Dia da injeção: evitar Z4+</td><td><span class="badge b-warn">PLANEJAR DIA</span></td></tr>
+      <tr class="tr-ok"><td><strong>Creatina 3g</strong></td><td>Performance</td><td>3g/dia · pós-treino</td><td>✅ Sem impacto negativo</td><td><span class="badge b-ok">MANTER</span></td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- ══════════ ABA COMPOSIÇÃO ══════════ -->
+<div id="page-composicao" class="page">
+  <div class="section-title">INBODY 120 — 27/FEV/2026 · PONTUAÇÃO 77/100</div>
+  <div class="grid4">
+    <div class="card"><div class="card-label">Peso InBody</div><div class="card-value warn-c">90,9<span style="font-size:12px;color:var(--text-l)"> kg</span></div><div class="card-sub">Ref: 61,3–82,9 kg</div><div class="card-delta trend-up">↓ −1,3 kg vs out/24</div></div>
+    <div class="card"><div class="card-label">Massa muscular</div><div class="card-value olive">39,5<span style="font-size:12px;color:var(--text-l)"> kg</span></div><div class="card-sub">Ref: 31,0–37,8 · Acima ✓</div><div class="card-delta trend-warn">↓ −1,8 kg vs abr/24 · monitorar</div></div>
+    <div class="card"><div class="card-label">Massa de gordura</div><div class="card-value crit-c">22,0<span style="font-size:12px;color:var(--text-l)"> kg</span></div><div class="card-sub">24,2% · Meta &lt;18 kg</div><div class="card-delta trend-up">↓ −4 kg vs out/24 ✓</div></div>
+    <div class="card">
+      <div class="card-label">InBody Score · 27/fev/2026</div>
+      <div class="score-wrap" style="margin-top:8px">
+        <div class="inbody-ring">
+          <svg viewBox="0 0 64 64" width="64" height="64">
+            <circle class="inbody-ring-bg" cx="32" cy="32" r="27"/>
+            <circle class="inbody-ring-fill" cx="32" cy="32" r="27" stroke="#556b2f" stroke-dasharray="169.6" stroke-dashoffset="40.7"/>
+          </svg>
+          <div class="inbody-ring-label">
+            <div class="inbody-ring-n">77</div>
+            <div class="inbody-ring-t">score</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--navy)">Pontuação InBody</div>
+          <div style="font-size:11px;color:var(--text-m);margin-top:2px">TMB: 1.859 kcal</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="chart-box"><div class="chart-label">Histórico de peso — médias mensais (kg)</div><div style="height:200px"><canvas id="chartPeso"></canvas></div></div>
+    <div class="chart-box"><div class="chart-label">Evolução InBody — composição</div><div style="height:200px"><canvas id="chartInBody"></canvas></div></div>
+  </div>
+  <div class="section-title">ANÁLISE SEGMENTAR</div>
+  <div class="grid2">
+    <div class="card">
+      <div class="card-label">Massa magra segmentar</div>
+      <div class="mrow"><span class="mrow-k">Braço esq.</span><span class="mrow-v">3,51 kg <span class="badge b-ok">101,3%</span></span></div>
+      <div class="mrow"><span class="mrow-k">Braço dir.</span><span class="mrow-v">3,61 kg <span class="badge b-ok">104,1%</span></span></div>
+      <div class="mrow"><span class="mrow-k">Tronco</span><span class="mrow-v">28,4 kg <span class="badge b-ok">98,0%</span></span></div>
+      <div class="mrow"><span class="mrow-k">Perna esq.</span><span class="mrow-v">11,01 kg <span class="badge b-ok">104,0%</span></span></div>
+      <div class="mrow"><span class="mrow-k">Perna dir.</span><span class="mrow-v">11,07 kg <span class="badge b-ok">104,6%</span></span></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Gordura segmentar</div>
+      <div class="mrow"><span class="mrow-k">Braço esq.</span><span class="mrow-v">1,4 kg <span class="badge b-crit">209%</span></span></div>
+      <div class="mrow"><span class="mrow-k">Braço dir.</span><span class="mrow-v">1,3 kg <span class="badge b-crit">206%</span></span></div>
+      <div class="mrow"><span class="mrow-k">Tronco</span><span class="mrow-v">11,4 kg <span class="badge b-crit">249%</span></span></div>
+      <div class="mrow"><span class="mrow-k">Perna esq.</span><span class="mrow-v">3,3 kg <span class="badge b-crit">179%</span></span></div>
+      <div class="mrow"><span class="mrow-k">Perna dir.</span><span class="mrow-v">3,4 kg <span class="badge b-crit">181%</span></span></div>
+    </div>
+  </div>
+
+  <!-- Antropometria Nutricionista -->
+  <div class="section-title" style="margin-top:28px">ANTROPOMETRIA — NUTRICIONISTA · WEBDIET (3 AVALIAÇÕES)</div>
+  <div class="grid4">
+    <div class="card"><div class="card-label">% Gordura</div><div class="card-value crit-c">23,3<span style="font-size:12px;color:var(--text-l)">%</span></div><div class="card-sub">Alta II · meta &lt;18%</div><div class="card-delta trend-up">↓ −4,1 pp desde fev/25</div></div>
+    <div class="card"><div class="card-label">Massa de gordura</div><div class="card-value warn-c">21,7<span style="font-size:12px;color:var(--text-l)"> kg</span></div><div class="card-sub">05/mar/2026 · meta &lt;15 kg</div><div class="card-delta trend-up">↓ −6,1 kg desde fev/25 ✓</div></div>
+    <div class="card"><div class="card-label">Massa livre de gordura</div><div class="card-value olive">71,7<span style="font-size:12px;color:var(--text-l)"> kg</span></div><div class="card-sub">05/mar/2026</div><div class="card-delta trend-warn">↓ −2,2 kg vs fev/25 · monitorar</div></div>
+    <div class="card"><div class="card-label">RCQ · Risco Metab.</div><div class="card-value warn-c">0,93</div><div class="card-sub">Moderado (era Alto em fev/25)</div><div class="card-delta trend-up">↓ −0,07 desde fev/25 ✓</div></div>
+  </div>
+  <div class="grid2" style="margin-top:4px">
+    <div class="chart-box"><div class="chart-label">Evolução composição — Nutricionista (kg)</div><div style="height:200px"><canvas id="chartComp"></canvas></div></div>
+    <div class="chart-box"><div class="chart-label">Somatório de dobras cutâneas (mm)</div><div style="height:200px"><canvas id="chartDobras"></canvas></div></div>
+  </div>
+
+  <details style="margin-top:4px">
+    <summary>📋 Evolução completa — 3 avaliações (fev/25, jul/25, mar/26)</summary>
+    <div class="details-body">
+      <div class="tbl-wrap" style="margin-top:12px"><table>
+        <thead><tr><th>PARÂMETRO</th><th>08/FEV/2025</th><th>05/JUL/2025</th><th>05/MAR/2026</th><th>TOTAL</th></tr></thead>
+        <tbody>
+          <tr><td class="td-h">Peso (kg)</td><td>101,7</td><td>100,0</td><td class="td-mono">93,4</td><td><span class="badge b-ok">↓ −8,3 kg</span></td></tr>
+          <tr><td class="td-h">IMC (kg/m²)</td><td>31,0</td><td>30,5</td><td class="td-mono">28,5</td><td><span class="badge b-ok">↓ −2,5</span></td></tr>
+          <tr><td class="td-h">Classif. IMC</td><td>Obesid. 1</td><td>Obesid. 1</td><td>Sobrepeso</td><td><span class="badge b-warn">↑ Melhorou</span></td></tr>
+          <tr><td class="td-h">% Gordura</td><td>27,4%</td><td>26,5%</td><td class="td-mono">23,3%</td><td><span class="badge b-ok">↓ −4,1 pp</span></td></tr>
+          <tr><td class="td-h">Massa gordura (kg)</td><td>27,8</td><td>26,5</td><td class="td-mono">21,7</td><td><span class="badge b-ok">↓ −6,1 kg</span></td></tr>
+          <tr><td class="td-h">Massa livre de gordura (kg)</td><td>73,9</td><td>73,5</td><td class="td-mono">71,7</td><td><span class="badge b-warn">↓ −2,2 kg · monitorar</span></td></tr>
+          <tr><td class="td-h">Massa residual (kg)</td><td>24,5</td><td>24,1</td><td class="td-mono">22,5</td><td><span class="badge b-ok">↓ −2,0 kg</span></td></tr>
+          <tr><td class="td-h">Somatório dobras (mm)</td><td>80</td><td>75</td><td class="td-mono">59,25</td><td><span class="badge b-ok">↓ −20,75 mm</span></td></tr>
+          <tr><td class="td-h">RCQ</td><td>1,00</td><td>0,96</td><td class="td-mono">0,93</td><td><span class="badge b-ok">↓ −0,07</span></td></tr>
+          <tr><td class="td-h">Risco Metab. (RCQ)</td><td><span class="badge b-crit">Alto</span></td><td><span class="badge b-warn">Moderado</span></td><td><span class="badge b-warn">Moderado</span></td><td>—</td></tr>
+          <tr><td class="td-h">CMB (cm)</td><td>29,3</td><td>29,7</td><td class="td-mono">27,9</td><td><span class="badge b-warn">↓ −1,4 cm · Adequado</span></td></tr>
+          <tr><td class="td-h">Densidade corporal (g/mL)</td><td>1,035</td><td>1,037</td><td class="td-mono">1,045</td><td><span class="badge b-ok">↑ +0,010</span></td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </details>
+
+  <details style="margin-top:8px">
+    <summary>📐 Dobras cutâneas e circunferências — detalhes</summary>
+    <div class="details-body">
+      <div class="grid2" style="margin-top:12px">
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>DOBRA (mm)</th><th>FEV/25</th><th>JUL/25</th><th>MAR/26</th></tr></thead>
+          <tbody>
+            <tr><td class="td-h">Tricipital</td><td>12</td><td>12</td><td>11</td></tr>
+            <tr><td class="td-h">Bicipital</td><td>7</td><td>7</td><td>6</td></tr>
+            <tr class="tr-ok"><td class="td-h">Abdominal</td><td>32</td><td>28</td><td>22</td></tr>
+            <tr><td class="td-h">Subescapular</td><td>33</td><td>29,5</td><td>27</td></tr>
+            <tr class="tr-ok"><td class="td-h">Axilar Média</td><td>20</td><td>18</td><td>13,5</td></tr>
+            <tr><td class="td-h">Coxa</td><td>11</td><td>11</td><td>11</td></tr>
+            <tr><td class="td-h">Torácica</td><td>16</td><td>16</td><td>15</td></tr>
+            <tr class="tr-ok"><td class="td-h">Suprailíaca</td><td>28</td><td>26,5</td><td>15,25</td></tr>
+            <tr><td class="td-h">Panturrilha</td><td>10</td><td>10</td><td>9</td></tr>
+            <tr style="background:var(--bg-2);font-weight:600"><td class="td-h">∑ Somatório</td><td>80</td><td>75</td><td>59,25</td></tr>
+          </tbody>
+        </table></div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>CIRCUNF. (cm)</th><th>FEV/25</th><th>JUL/25</th><th>MAR/26</th></tr></thead>
+          <tbody>
+            <tr class="tr-ok"><td class="td-h">Cintura</td><td>107,8</td><td>104,5</td><td>98,4</td></tr>
+            <tr><td class="td-h">Quadril</td><td>108,0</td><td>109,0</td><td>105,5</td></tr>
+            <tr class="tr-ok"><td class="td-h">Abdomen</td><td>107,0</td><td>105,8</td><td>100,0</td></tr>
+            <tr><td class="td-h">Braço relaxado</td><td>33,1</td><td>33,5</td><td>31,4</td></tr>
+            <tr><td class="td-h">Braço contraído</td><td>34,5</td><td>34,5</td><td>33,2</td></tr>
+            <tr><td class="td-h">Medial da coxa</td><td>58,7</td><td>59,2</td><td>57,0</td></tr>
+            <tr><td class="td-h">Panturrilha</td><td>40,7</td><td>42,0</td><td>40,5</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+  </details>
+</div>
+
+<!-- ══════════ ABA PROVAS ══════════ -->
+<div id="page-provas" class="page">
+  <div class="section-title">RECORDES PESSOAIS</div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>DISTÂNCIA</th><th>TEMPO PR</th><th>PACE</th><th>VELOCIDADE</th><th>STATUS</th></tr></thead>
+    <tbody>
+      <tr><td>400m</td><td class="td-h td-mono">1:53</td><td>4:43/km</td><td>12,7 km/h</td><td><span class="badge b-info">VELOCIDADE PURA</span></td></tr>
+      <tr><td>800m</td><td class="td-h td-mono">4:28</td><td>5:33/km</td><td>10,8 km/h</td><td><span class="badge b-info">CURTA</span></td></tr>
+      <tr><td>1km</td><td class="td-h td-mono">5:51</td><td>5:51/km</td><td>10,3 km/h</td><td><span class="badge b-info">CURTA</span></td></tr>
+      <tr><td>5km</td><td class="td-h td-mono">35:08</td><td>7:02/km</td><td>8,5 km/h</td><td><span class="badge b-warn">MÉDIA</span></td></tr>
+      <tr class="tr-ok"><td><strong>10km</strong></td><td class="td-h td-mono">1:12:55 <span class="badge b-ok" style="font-size:9px">PR</span></td><td>7:17/km</td><td>8,2 km/h</td><td><span class="badge b-ok">Circuito Caixa</span></td></tr>
+      <tr style="background:var(--accent-bg)"><td><strong>Meia maratona</strong></td><td>🎯 06/JUN/2026</td><td>Meta: 7:50–8:30</td><td>—</td><td><span class="badge b-olive">EM PREPARAÇÃO</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="chart-box">
+    <div class="chart-label">Curva de pace por distância (PRs)</div>
+    <div style="height:190px"><canvas id="chartPRs"></canvas></div>
+  </div>
+  <div class="section-title">PROVAS REALIZADAS</div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>DATA</th><th>PROVA</th><th>DIST</th><th>CHIP</th><th>PACE</th><th>FC</th><th>TEMP</th><th>GERAL</th><th>STATUS</th></tr></thead>
+    <tbody>
+      <tr class="tr-ok"><td>01/jun/2025</td><td class="td-h">Circ. Estações Inverno (5K)</td><td>5,00</td><td class="td-mono">0:38:51</td><td>7:46/km</td><td>137</td><td>~20°C</td><td>5.685º</td><td><span class="badge b-ok">✓</span></td></tr>
+      <tr class="tr-ok"><td>21/set/2025</td><td class="td-h">Circ. Estações Primavera</td><td>10,15</td><td class="td-mono">1:26:27</td><td>8:31/km</td><td>137</td><td>~26°C</td><td>—</td><td><span class="badge b-ok">✓</span></td></tr>
+      <tr class="tr-warn"><td>07/dez/2025</td><td class="td-h">Circ. Estações Verão</td><td>10,02</td><td class="td-mono">1:18:12</td><td>7:49/km</td><td>161</td><td>32°C</td><td>3.046º</td><td><span class="badge b-warn">+3:05</span></td></tr>
+      <tr class="tr-ok"><td>14/dez/2025</td><td class="td-h">Circuito Caixa 🏆</td><td>10,02</td><td class="td-mono">1:12:55</td><td>7:17/km</td><td>152</td><td>31°C</td><td>145º</td><td><span class="badge b-ok">PR CHIP ✓</span></td></tr>
+      <tr style="background:var(--ok-bg)"><td><strong>06/jun/2026</strong></td><td class="td-h">Meia Maratona do Rio 🎯</td><td>21,1</td><td>—</td><td>Meta: 7:50–8:30</td><td>—</td><td>~20°C</td><td>—</td><td><span class="badge b-olive">🎯</span></td></tr>
+    </tbody>
+  </table></div>
+  <div class="chart-box">
+    <div class="chart-label">Evolução de pace nas provas</div>
+    <div style="height:190px"><canvas id="chartProvasEvolucao"></canvas></div>
+  </div>
+</div>
+
+<!-- ══════════ JAVASCRIPT ══════════ -->
+<script>
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.color = '#6b7280';
+const NAVY='#1b263b', OLIVE='#556b2f', GRAY='#4a4a4a';
+const OK='#2d7a47', WARN='#a16207', CRIT='#b91c1c', INFO='#1d4ed8';
+const SWIM='#0e7490', GYM='#7c3aed';
+
+/* ── DADOS DOS TREINOS ── */
+const TREINOS = [
+  {id:'T1',  nome:'Z2 45min',              data:'2025-12-15', tipo:'Z2',       dist:5.26,  ritmo:'8:41', fcMed:140, fcMax:158, cad:133, solo:335, bat:-9,  pse:4, temp:32.0},
+  {id:'T2',  nome:'5×400m',                data:'2025-12-19', tipo:'TIROS',    dist:2.0,   ritmo:'7:08', fcMed:130, fcMax:157, cad:125, solo:363, bat:-7,  pse:4, temp:27.6},
+  {id:'T3',  nome:'Long run 8km',          data:'2025-12-22', tipo:'LONG RUN', dist:8.0,   ritmo:'8:22', fcMed:138, fcMax:157, cad:131, solo:352, bat:-17, pse:5, temp:32.1},
+  {id:'T4',  nome:'Z2 35min',              data:'2025-12-25', tipo:'Z2',       dist:4.2,   ritmo:'8:19', fcMed:133, fcMax:154, cad:119, solo:328, bat:-15, pse:8, temp:36.9},
+  {id:'T5',  nome:'10×2min',               data:'2025-12-30', tipo:'TIROS',    dist:2.8,   ritmo:'7:06', fcMed:114, fcMax:139, cad:124, solo:356, bat:-5,  pse:4, temp:27.2},
+  {id:'B1',  nome:'Bônus esteira',         data:'2026-01-02', tipo:'BÔNUS',    dist:2.54,  ritmo:'7:51', fcMed:121, fcMax:137, cad:136, solo:354, bat:-4,  pse:8, temp:28.2},
+  {id:'T6',  nome:'Long run 9km',          data:'2026-01-04', tipo:'LONG RUN', dist:9.0,   ritmo:'8:07', fcMed:142, fcMax:166, cad:125, solo:365, bat:-27, pse:7, temp:31.3},
+  {id:'T7',  nome:'Z2 40min',              data:'2026-01-07', tipo:'Z2',       dist:5.3,   ritmo:'7:36', fcMed:133, fcMax:157, cad:123, solo:324, bat:-12, pse:8, temp:30.6},
+  {id:'T8',  nome:'10×3min',               data:'2026-01-13', tipo:'TIROS',    dist:4.61,  ritmo:'7:46', fcMed:129, fcMax:151, cad:127, solo:310, bat:-8,  pse:8, temp:31.0},
+  {id:'T9',  nome:'Long run 10km',         data:'2026-01-21', tipo:'LONG RUN', dist:10.0,  ritmo:'9:30', fcMed:106, fcMax:137, cad:116, solo:390, bat:-15, pse:1, temp:26.2},
+  {id:'B2',  nome:'Bônus esteira',         data:'2026-01-22', tipo:'BÔNUS',    dist:1.41,  ritmo:'7:49', fcMed:130, fcMax:150, cad:136, solo:318, bat:-1,  pse:8, temp:29.3},
+  {id:'B3',  nome:'Vista Chinesa',         data:'2026-01-25', tipo:'BÔNUS',    dist:13.57, ritmo:'9:24', fcMed:128, fcMax:167, cad:122, solo:346, bat:-26, pse:9, temp:30.5},
+  {id:'T11', nome:'5×600m',               data:'2026-02-06', tipo:'TIROS',    dist:3.18,  ritmo:'7:46', fcMed:119, fcMax:151, cad:123, solo:320, bat:-10, pse:6, temp:31.7},
+  {id:'T12', nome:'Long run 7km',          data:'2026-02-12', tipo:'LONG RUN', dist:7.0,   ritmo:'8:34', fcMed:129, fcMax:144, cad:126, solo:343, bat:-12, pse:8, temp:33.8},
+  {id:'B4',  nome:'Bônus 5km',             data:'2026-02-14', tipo:'BÔNUS',    dist:5.01,  ritmo:'7:43', fcMed:138, fcMax:155, cad:133, solo:334, bat:-11, pse:8, temp:33.9},
+  {id:'T13', nome:'30min Z2',              data:'2026-02-19', tipo:'Z2',       dist:3.64,  ritmo:'8:14', fcMed:123, fcMax:147, cad:128, solo:332, bat:-9,  pse:4, temp:31.6},
+  {id:'T14', nome:'3×1000m',              data:'2026-02-28', tipo:'TIROS',    dist:4.01,  ritmo:'7:14', fcMed:136, fcMax:160, cad:131, solo:328, bat:-15, pse:7, temp:30.4},
+  {id:'T15', nome:'Long run 10km',         data:'2026-03-08', tipo:'LONG RUN', dist:10.0,  ritmo:'8:11', fcMed:143, fcMax:162, cad:123, solo:356, bat:-18, pse:9, temp:33.3},
+  {id:'T16', nome:'50min Z2',              data:'2026-03-14', tipo:'Z2',       dist:6.16,  ritmo:'8:07', fcMed:141, fcMax:161, cad:134, solo:339, bat:-14, pse:4, temp:33.8},
+  {id:'T17', nome:'3×1000m Z4',           data:'2026-03-17', tipo:'TIROS',    dist:5.57,  ritmo:'8:41', fcMed:123, fcMax:156, cad:117, solo:329, bat:-9,  pse:7, temp:29.9},
+  {id:'T18', nome:'Long run 12,9km Z2→Z3',data:'2026-03-19', tipo:'LONG RUN', dist:12.9,  ritmo:'8:25', fcMed:128, fcMax:157, cad:126, solo:338, bat:-21, pse:9, temp:29.3},
+  {id:'T19', nome:'Run/Walk 5,95km Z2→Z3',data:'2026-03-24', tipo:'Z2/Z3',    dist:5.95,  ritmo:'7:18', fcMed:132, fcMax:154, cad:124, solo:324, bat:-10, pse:9, temp:31.1},
+];
+
+const TIPO_COLORS = {Z2:INFO, TIROS:CRIT, 'LONG RUN':OK, 'BÔNUS':GYM, 'Z2/Z3':OLIVE, 'TESTE':'#f97316'};
+const TIPO_BADGE  = {Z2:'b-info', TIROS:'b-crit', 'LONG RUN':'b-ok', 'BÔNUS':'b-gym', 'Z2/Z3':'b-olive', 'TESTE':'b-warn'};
+
+/* ── HEADER ── */
+function initHeader() {
+  const prova = new Date('2026-06-06');
+  const hoje  = new Date(); hoje.setHours(0,0,0,0);
+  const diff  = Math.ceil((prova - hoje) / 86400000);
+  const DIAS  = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+  const MESES = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+  const d = new Date();
+  document.getElementById('hDataValor').innerHTML =
+    String(d.getDate()).padStart(2,'0') + ' ' + MESES[d.getMonth()] + '<span class="hg-unit">' + d.getFullYear() + '</span>';
+  document.getElementById('hDataSub').textContent = DIAS[d.getDay()].toUpperCase().substring(0,3) + '-FEIRA';
+  document.getElementById('diasProva').textContent = diff;
+  const inicio = new Date('2025-12-15');
+  const total  = Math.ceil((prova - inicio) / 86400000);
+  const pass   = Math.min(total, Math.ceil((hoje - inicio) / 86400000));
+  const pct    = Math.round(pass / total * 100);
+  document.getElementById('hgProgressFill').style.width = pct + '%';
+  const barProva = document.getElementById('barProva');
+  const elPct    = document.getElementById('pctProva');
+  if (barProva) { barProva.style.width = pct+'%'; barProva.className = 'prog-fill '+(pct<50?'pf-ok':pct<80?'pf-warn':'pf-crit'); }
+  if (elPct) elPct.textContent = pct + '%';
+}
+initHeader();
+
+/* ── TABS ── */
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  el.classList.add('active');
+}
+
+/* ── RENDER TREINOS ── */
+(function renderTreinos() {
+  const c = document.getElementById('lista-treinos');
+  if (!c) return;
+  TREINOS.forEach(t => {
+    const fcColor = t.fcMed > 145 ? '🔴' : t.fcMed > 130 ? '🟡' : '🟢';
+    const batClass = t.bat <= -20 ? 'b-crit' : t.bat <= -10 ? 'b-warn' : 'b-ok';
+    c.innerHTML += `
+    <div class="t-card">
+      <div class="t-n" style="color:${TIPO_COLORS[t.tipo]||GRAY}44">${t.id}</div>
+      <div>
+        <div class="t-name">${t.nome}</div>
+        <div class="t-date">${t.data.split('-').reverse().join('/')} · ${t.temp}°C</div>
+        <div class="t-tags">
+          <span class="badge ${TIPO_BADGE[t.tipo]||'b-gray'}">${t.tipo}</span>
+          <span class="badge b-gray">${t.dist} km</span>
+          <span class="badge b-gray">${t.ritmo}/km</span>
+          <span class="badge ${batClass}">Bat ${t.bat}</span>
+        </div>
+      </div>
+      <div class="t-stats">
+        <div class="ts"><div class="ts-v">${t.fcMed}${fcColor}</div><div class="ts-l">FC MÉD</div></div>
+        <div class="ts"><div class="ts-v">${t.cad}</div><div class="ts-l">CAD</div></div>
+        <div class="ts"><div class="ts-v">${t.pse}/10</div><div class="ts-l">PSE</div></div>
+      </div>
+    </div>`;
+  });
+})();
+
+/* ── ALERTAS ── */
+const ALERTAS = [
+  {nivel:'crit',icon:'❤️',titulo:'HDL 32 mg/dL persistente',meta:'jan/26 · Ref: >40 · Tendência: sem melhora desde jun/24',resumo:'Risco cardiovascular elevado. Baixo HDL combinado com triglicerídeos acima do limite (151 mg/dL) aumenta o risco cardiometabólico.',coach:'Considerar avaliação cardiológica antes de iniciar treinos em Z4/Z5 no ciclo 2.'},
+  {nivel:'crit',icon:'🧬',titulo:'Beta-talassemia minor — ferritina 486 µg/L',meta:'Crônico · Ferritina acima do limite superior (446 µg/L)',resumo:'NÃO suplementar ferro. VO₂max estruturalmente 5–10% menor. Usar FC e PSE como guias principais.',coach:'Informar o coach sobre limitação estrutural de VO₂max. FC máxima pode estar limitada também pelo Neblock.'},
+  {nivel:'crit',icon:'💊',titulo:'Ácido úrico 7,8 mg/dL — risco de gota',meta:'jan/26 · Ref: <7,0 · Tendência: 6,5→7,8 (subindo)',resumo:'Desidratação concentra ácido úrico — risco aumentado em treinos longos no calor. Evitar: vísceras, frutos do mar, cerveja.',coach:'Monitorar sinais de crise inflamatória articular pós-treino intenso. Checar com médico.'},
+  {nivel:'warn',icon:'☀️',titulo:'Vitamina D 28 ng/mL — insuficiente',meta:'jan/26 · Ref atleta: 40–60 ng/mL · Consulta: 22/abr às 8h',resumo:'Vitamina D insuficiente afeta recuperação muscular, imunidade e absorção de cálcio.',coach:'Confirmar dose de suplementação com o endocrinologista na consulta de 22/abr.'},
+  {nivel:'warn',icon:'💉',titulo:'Neblock (betabloqueador) + FC artificialmente limitada',meta:'Contínuo · Prescrição cardiológica',resumo:'Neblock limita FC máxima. Zonas de treino baseadas em FC podem estar subavaliadas. Monitorar por PSE e pace.',coach:'Usar RPE (escala de esforço percebido) em paralelo com FC nas sessões Z4/Z5.'},
+  {nivel:'warn',icon:'⚖️',titulo:'Triglicerídeos 151 mg/dL — acima do limite',meta:'jan/26 · Ref: <150 · Subiu vs nov/25 (103→151)',resumo:'Pode estar relacionado à alimentação no período festivo. Exercício aeróbico regular tende a reduzir.',coach:'Solicitar novo painel lipídico em mai/2026 (pré-prova) para avaliar evolução.'},
+  {nivel:'info',icon:'✅',titulo:'Ciclo 1 concluído — 19/19 + 4 bônus · 142,3 km',meta:'Meia Maratona do Rio · 06/jun/2026',resumo:'Excelente aderência ao plano. Long run máximo de 12,9 km atingido. Cadência evoluiu de 133→165 ppm (+24%). T19 (24/mar): 5,95 km · 7:18/km · FC 132→154 · PSE 9/10 · 31,1°C.',coach:'Ciclo 2 começa em abril com long run de ~14 km.'},
+  {nivel:'info',icon:'💉',titulo:'Tirzepatida (Mounjaro) — planejar dias de injeção',meta:'Semanal · Pode causar náusea e queda de energia',resumo:'GLP-1 pode afetar energia e disposição. Injetar preferencialmente pós-treino ou em dia de descanso.',coach:'Comunicar ao coach qual dia da semana é o dia da injeção para ajuste de intensidade.'},
+];
+
+(function renderAlertas() {
+  const c = document.getElementById('alertasContainer');
+  if (!c) return;
+  const ordem = {crit:0,warn:1,info:2,ok:3};
+  [...ALERTAS].sort((a,b)=>ordem[a.nivel]-ordem[b.nivel]).forEach(al => {
+    const bMap = {crit:'b-crit',warn:'b-warn',info:'b-info',ok:'b-ok'};
+    const lMap = {crit:'CRÍTICO',warn:'ATENÇÃO',info:'INFO',ok:'OK'};
+    c.innerHTML += `
+    <div class="alert-card ac-${al.nivel}">
+      <div class="ac-stripe"></div>
+      <div class="ac-body">
+        <div class="ac-header"><span>${al.icon}</span><span class="badge ${bMap[al.nivel]}">${lMap[al.nivel]}</span><span class="ac-title">${al.titulo}</span></div>
+        <div class="ac-meta"><strong>${al.meta}</strong><br>${al.resumo}</div>
+        <div class="ac-coach">💬 Para o coach: <span>${al.coach}</span></div>
+      </div>
+    </div>`;
+  });
+})();
+
+/* ── SCORE ── */
+(function computeScore() {
+  const volume = 30, fcRepouso = 18;
+  const peso = Math.round((10.4/16.8) * 25);
+  const criticos = ALERTAS.filter(a=>a.nivel==='crit').length;
+  const atencoes = ALERTAS.filter(a=>a.nivel==='warn').length;
+  const saude = Math.max(0, 25 - criticos*4 - atencoes*2);
+  const total = Math.min(100, volume + fcRepouso + peso + saude);
+  const strokeLen = 2 * Math.PI * 22;
+  const offset = strokeLen - (strokeLen * total / 100);
+  const ring = document.getElementById('scoreRingFill');
+  if (ring) {
+    ring.setAttribute('stroke-dasharray', strokeLen.toFixed(1));
+    setTimeout(()=>{ ring.setAttribute('stroke-dashoffset', offset.toFixed(1)); }, 200);
+    ring.setAttribute('stroke', total>=75?'#4ade80':total>=55?'#fbbf24':'#f87171');
+  }
+  const sv = document.getElementById('scoreVal'); if (sv) sv.textContent = total;
+  const sl = document.getElementById('scoreLabel'); if (sl) sl.textContent = total>=75?'Bom · em evolução':total>=55?'Moderado · atenção':'Revisar alertas';
+})();
+
+/* ── HEATMAP ── */
+(function renderHeatmap() {
+  const c = document.getElementById('heatmapContainer'); if (!c) return;
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const kmMap = {};
+  TREINOS.forEach(t => { kmMap[t.data] = (kmMap[t.data]||0) + t.dist; });
+  const startDate = new Date(hoje); startDate.setDate(hoje.getDate() - 99);
+  startDate.setDate(startDate.getDate() - startDate.getDay());
+  const weeks = [];
+  let cur = new Date(startDate);
+  while (cur <= hoje) {
+    const week = [];
+    for (let d=0; d<7; d++) {
+      const dateStr = cur.toISOString().split('T')[0];
+      const km = kmMap[dateStr]||0;
+      let lvl = 0;
+      if (km>0&&km<=3) lvl=1; else if (km>3&&km<=6) lvl=2; else if (km>6&&km<=10) lvl=3; else if (km>10) lvl=4;
+      week.push({dateStr, km, lvl, future: cur>hoje});
+      cur.setDate(cur.getDate()+1);
+    }
+    weeks.push(week);
+  }
+  const DIAS_SHORT = ['D','S','T','Q','Q','S','S'];
+  let html = '<div class="heatmap-grid-wrap"><div class="heatmap-days">';
+  DIAS_SHORT.forEach(d=>{ html+=`<div class="hm-day-label">${d}</div>`; });
+  html += '</div><div class="heatmap-weeks">';
+  weeks.forEach(week => {
+    html += '<div class="hm-week">';
+    week.forEach(day => {
+      if (day.future) html += `<div class="hm-cell hm-0" style="opacity:.3"></div>`;
+      else {
+        const tip = day.km>0 ? `${day.dateStr}: ${day.km.toFixed(1)} km` : `${day.dateStr}: descanso`;
+        html += `<div class="hm-cell hm-${day.lvl}" data-tip="${tip}" title="${tip}"></div>`;
+      }
+    });
+    html += '</div>';
+  });
+  html += '</div></div>';
+  c.innerHTML = html;
+})();
+
+/* ── ODÔMETRO ── */
+(function renderShoes() {
+  const totalKm = TREINOS.reduce((s,t)=>s+t.dist,0);
+  const shoes = [
+    {nome:'Asics Nimbus 25 (principal)', km:Math.round(totalKm*10)/10, limite:600, comprado:'dez/2025'},
+    {nome:'Nike Pegasus 40 (treino leve)', km:32.4, limite:500, comprado:'out/2025'},
+  ];
+  const c = document.getElementById('shoeOdometer'); if (!c) return;
+  let html = '<div class="shoe-card">';
+  shoes.forEach(s => {
+    const pct = Math.round(s.km/s.limite*100);
+    const fillColor = pct>=100?CRIT:pct>=80?WARN:OK;
+    const alerta = pct>=100?'🔴 Limite atingido! Trocar sapatilha.':pct>=80?`⚠️ ${s.km}/${s.limite} km (${pct}%) — planejar troca.`:'';
+    html += `<div class="shoe-item">
+      <div class="shoe-header">
+        <div><div class="shoe-name">👟 ${s.nome}</div><div style="font-size:10px;color:var(--text-l);margin-top:2px">Comprado em ${s.comprado} · limite ${s.limite} km</div></div>
+        <div class="shoe-km" style="color:${fillColor}">${s.km}<span style="font-size:12px;font-weight:500;color:var(--text-l)"> km</span></div>
+      </div>
+      <div class="shoe-track"><div class="shoe-fill" style="width:${Math.min(100,pct)}%;background:${fillColor}"></div></div>
+      <div class="shoe-meta">${pct}% do limite (${s.limite} km) ${alerta?'· '+alerta:''}</div>
+    </div>`;
+  });
+  html += '</div>';
+  c.innerHTML = html;
+})();
+
+/* ── ACWR ── */
+function computeWeeklyKm() {
+  const start = new Date('2025-12-15');
+  const weeks = [];
+  for (let i=0; i<14; i++) {
+    const ws = new Date(start); ws.setDate(start.getDate()+i*7);
+    const we = new Date(ws); we.setDate(ws.getDate()+6);
+    const km = TREINOS.filter(t=>{ const td=new Date(t.data); return td>=ws&&td<=we; }).reduce((s,t)=>s+t.dist,0);
+    const label = ws.getDate().toString().padStart(2,'0')+'/'+(ws.getMonth()+1).toString().padStart(2,'0');
+    weeks.push({label, km:Math.round(km*10)/10, ws, we});
+  }
+  return weeks;
+}
+function computeACWR(weeks) {
+  return weeks.map((w,i) => {
+    const acute = w.km;
+    if (i<3) return {...w, chronic:null, acwr:null};
+    const chronic = (weeks[i-3].km+weeks[i-2].km+weeks[i-1].km+w.km)/4;
+    const acwr = chronic>0?Math.round((acute/chronic)*100)/100:null;
+    return {...w, chronic:Math.round(chronic*10)/10, acwr};
+  });
+}
+
+(function renderACWR() {
+  const weeks = computeACWR(computeWeeklyKm());
+  const acuteKm = weeks.map(w=>w.km);
+  const chronic = weeks.map(w=>w.chronic);
+  const acwrVals = weeks.map(w=>w.acwr);
+  const barColors = weeks.map(w => {
+    if (!w.acwr) return OLIVE+'88';
+    if (w.acwr>1.5||w.acwr<0.8) return CRIT+'99';
+    if (w.acwr>1.3) return WARN+'99';
+    return OK+'99';
+  });
+  new Chart(document.getElementById('chartACWR'), {
+    type:'bar',
+    data:{labels:weeks.map(w=>w.label),datasets:[
+      {type:'bar',label:'Carga aguda (km)',data:acuteKm,backgroundColor:barColors,borderRadius:4,yAxisID:'y'},
+      {type:'line',label:'Carga crônica (4 sem)',data:chronic,borderColor:NAVY,borderDash:[5,3],pointRadius:3,tension:0.3,yAxisID:'y'},
+      {type:'line',label:'ACWR',data:acwrVals,borderColor:INFO,pointRadius:4,tension:0.3,yAxisID:'y2',pointBackgroundColor:acwrVals.map(v=>!v?'transparent':v>1.5||v<0.8?CRIT:v>1.3?WARN:OK)}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{font:{size:10}}}},
+      scales:{y:{min:0,position:'left',ticks:{callback:v=>v+'km'}},
+              y2:{min:0,max:2.5,position:'right',grid:{drawOnChartArea:false},ticks:{callback:v=>v.toFixed(1)}}}}
+  });
+  const last = weeks.filter(w=>w.acwr!==null).pop();
+  if (last) {
+    const status = document.getElementById('acwrStatus');
+    if (status) {
+      const a = last.acwr;
+      const zona = a>1.5?{cls:'b-crit',txt:`ACWR ${a} — RISCO ALTO de lesão (>1,5)`}
+                 :a>1.3?{cls:'b-warn',txt:`ACWR ${a} — ZONA DE ATENÇÃO (1,3–1,5)`}
+                 :a<0.8?{cls:'b-warn',txt:`ACWR ${a} — DESTREINAMENTO (<0,8)`}
+                       :{cls:'b-ok', txt:`ACWR ${a} — ZONA SEGURA (0,8–1,3) ✓`};
+      status.innerHTML = `<span class="badge ${zona.cls}" style="font-size:11px;padding:4px 10px">${zona.txt}</span>`;
+    }
+  }
+})();
+
+/* ── CHARTS ── */
+new Chart(document.getElementById('chartVolume'),{type:'bar',data:{labels:TREINOS.map(t=>t.id),datasets:[{data:TREINOS.map(t=>t.dist),backgroundColor:TREINOS.map(t=>(TIPO_COLORS[t.tipo]||GRAY)+'99'),borderColor:TREINOS.map(t=>TIPO_COLORS[t.tipo]||GRAY),borderWidth:1,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v+'km'}}}}});
+
+new Chart(document.getElementById('chartSensacao'),{type:'line',data:{labels:TREINOS.map(t=>t.id),datasets:[{label:'PSE',data:TREINOS.map(t=>t.pse),borderColor:OLIVE,backgroundColor:OLIVE+'22',fill:true,tension:0.3,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:10}}}});
+
+new Chart(document.getElementById('chartCadencia'),{type:'line',data:{labels:TREINOS.map(t=>t.id),datasets:[{label:'Cad.',data:TREINOS.map(t=>t.cad),borderColor:OLIVE,backgroundColor:OLIVE+'22',fill:true,tension:0.3,pointRadius:3},{label:'Meta 165',data:TREINOS.map(()=>165),borderColor:OK,borderDash:[5,3],pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10}}}},scales:{y:{min:100,max:180,ticks:{callback:v=>v+' ppm'}}}}});
+
+new Chart(document.getElementById('chartContato'),{type:'line',data:{labels:TREINOS.map(t=>t.id),datasets:[{data:TREINOS.map(t=>t.solo),borderColor:WARN,backgroundColor:WARN+'22',fill:true,tension:0.3,pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{ticks:{callback:v=>v+' ms'}}}}});
+
+new Chart(document.getElementById('chartScatter'),{type:'scatter',data:{datasets:[{data:TREINOS.map(t=>({x:t.temp,y:t.fcMed,id:t.id})),backgroundColor:TREINOS.map(t=>t.fcMed>145?CRIT+'cc':t.fcMed>130?WARN+'cc':OK+'cc'),pointRadius:7,pointHoverRadius:9}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.raw.id}: ${ctx.raw.x}°C · ${ctx.raw.y} bpm`}}},scales:{x:{title:{display:true,text:'Temperatura (°C)'}},y:{title:{display:true,text:'FC Média (bpm)'}}}}});
+
+const longRuns=TREINOS.filter(t=>t.tipo==='LONG RUN');
+new Chart(document.getElementById('chartFC'),{type:'line',data:{labels:longRuns.map(t=>t.id+' '+t.data.substring(5)),datasets:[{label:'FC média',data:longRuns.map(t=>t.fcMed),borderColor:CRIT,backgroundColor:CRIT+'11',fill:true,tension:0.3,pointRadius:5},{label:'FC máx',data:longRuns.map(t=>t.fcMax),borderColor:WARN,borderDash:[4,2],pointRadius:4,tension:0.3},{label:'Pres. máx (125)',data:longRuns.map(()=>125),borderColor:INFO,borderDash:[6,3],pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10}}}},scales:{y:{min:90,max:180,ticks:{callback:v=>v+' bpm'}}}}});
+
+const tiros=TREINOS.filter(t=>t.tipo==='TIROS');
+new Chart(document.getElementById('chartTiros'),{type:'bar',data:{labels:tiros.map(t=>t.id+' '+t.nome),datasets:[{label:'Distância (m)',data:tiros.map(t=>Math.round(t.dist*1000)),backgroundColor:OLIVE+'88',borderRadius:4,yAxisID:'y'},{type:'line',label:'FC máx',data:tiros.map(t=>t.fcMax),borderColor:CRIT,pointRadius:4,tension:0.2,yAxisID:'y2'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10}}}},scales:{y:{min:0,position:'left',ticks:{callback:v=>v+'m'}},y2:{min:100,max:175,position:'right',grid:{drawOnChartArea:false},ticks:{callback:v=>v+' bpm'}}}}});
+
+new Chart(document.getElementById('chartCorrelacao'),{type:'scatter',data:{datasets:[{label:'Dados reais',data:[{x:6,y:140,id:'T7'},{x:8,y:133,id:'T4'},{x:7,y:129,id:'T12'}],backgroundColor:OLIVE+'cc',pointRadius:8,pointHoverRadius:10}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10}}},tooltip:{callbacks:{label:ctx=>`${ctx.raw.id||''}: PSE academia D-1: ${ctx.raw.x||'?'} · FC corrida: ${ctx.raw.y} bpm`}}},scales:{x:{min:0,max:10,title:{display:true,text:'PSE academia dia anterior'}},y:{min:100,max:175,title:{display:true,text:'FC média corrida (bpm)'}}}}});
+
+new Chart(document.getElementById('chartPeso'),{type:'line',data:{labels:['ago/25','set/25','out/25','nov/25','dez/25','jan/26','fev/26','mar/26'],datasets:[{label:'Peso',data:[101.8,103.5,102.5,100.1,98.2,96.6,94.2,90.7],borderColor:NAVY,backgroundColor:NAVY+'11',fill:true,tension:0.3,pointRadius:5},{label:'Meta 85kg',data:[85,85,85,85,85,85,85,85],borderColor:OK,borderDash:[5,3],pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10}}}},scales:{y:{min:80,max:110,ticks:{callback:v=>v+'kg'}}}}});
+
+new Chart(document.getElementById('chartInBody'),{type:'line',data:{labels:['out/23','jan/24','abr/24','out/24','fev/26'],datasets:[{label:'Peso (kg)',data:[105.1,101.7,102.1,99.7,90.9],borderColor:NAVY,tension:0.3,pointRadius:5,yAxisID:'y'},{label:'Músculo (kg)',data:[40.7,40.3,41.5,41.3,39.5],borderColor:OLIVE,tension:0.3,pointRadius:5,yAxisID:'y'},{label:'% Gordura',data:[32.2,30.8,29.1,27.8,24.2],borderColor:WARN,borderDash:[4,2],tension:0.3,pointRadius:5,yAxisID:'y2'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10}}}},scales:{y:{min:35,max:110,position:'left',ticks:{callback:v=>v+'kg'}},y2:{min:20,max:40,position:'right',grid:{drawOnChartArea:false},ticks:{callback:v=>v+'%'}}}}});
+
+new Chart(document.getElementById('chartComp'),{type:'bar',data:{labels:['08/Fev/2025','05/Jul/2025','05/Mar/2026'],datasets:[{label:'Massa gordura (kg)',data:[27.8,26.5,21.7],backgroundColor:CRIT,borderRadius:4},{label:'Massa livre gordura (kg)',data:[73.9,73.5,71.7],backgroundColor:OLIVE,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10}}},scales:{x:{stacked:false,grid:{display:false}},y:{grid:{color:'#f0f2f5'}}}}});
+
+new Chart(document.getElementById('chartDobras'),{type:'bar',data:{labels:['Tricipital','Bicipital','Abdominal','Subescap.','Axilar','Coxa','Torácica','Suprailíaca','Panturrilha'],datasets:[{label:'Fev/25',data:[12,7,32,33,20,11,16,28,10],backgroundColor:'rgba(185,28,28,.25)',borderRadius:3},{label:'Jul/25',data:[12,7,28,29.5,18,11,16,26.5,10],backgroundColor:'rgba(161,98,7,.35)',borderRadius:3},{label:'Mar/26',data:[11,6,22,27,13.5,11,15,15.25,9],backgroundColor:OLIVE,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10}}},scales:{x:{grid:{display:false},ticks:{font:{size:9}}},y:{grid:{color:'#f0f2f5'}}}}});
+
+new Chart(document.getElementById('chartPRs'),{type:'line',data:{labels:['400m','800m','1km','1 mi','5km','10km'],datasets:[{data:[283,333,351,363,422,437],borderColor:OLIVE,backgroundColor:OLIVE+'18',fill:true,tension:0.3,pointRadius:6,pointBackgroundColor:OLIVE}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{reverse:true,ticks:{callback:v=>{const m=Math.floor(v/60),s=v%60;return m+':'+(s<10?'0':'')+s;}}}}}});
+
+new Chart(document.getElementById('chartProvasEvolucao'),{type:'bar',data:{labels:['Inverno\n01/jun/25\n5K','Primavera\n21/set/25\n10km','Verão\n07/dez/25\n10km','Caixa\n14/dez/25\nPR','Meia\n06/jun/26\nMeta'],datasets:[{data:[466,511,469,437,480],backgroundColor:['#1d4ed8cc','#2d7a47cc','#a16207cc','#556b2fcc','#1d4ed844'],borderColor:['#1d4ed8','#2d7a47','#a16207','#556b2f','#1d4ed8'],borderWidth:2,borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{const v=ctx.raw,m=Math.floor(v/60),s=v%60;return 'Pace: '+m+':'+(s<10?'0':'')+s+'/km';}}}},scales:{y:{reverse:true,min:400,max:540,ticks:{callback:v=>{const m=Math.floor(v/60),s=v%60;return m+':'+(s<10?'0':'')+s;}}}}}});
+</script>
+</body>
+</html>
