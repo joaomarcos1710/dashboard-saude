@@ -289,8 +289,8 @@ details[open] summary::before{transform:rotate(90deg)}
     </div>
     <div class="hero-card">
       <div class="hg-label">⚖️ PESO ATUAL</div>
-      <div class="hg-value">90,3<span class="hg-unit">kg</span></div>
-      <div class="hg-sub"><span class="hg-delta-ok">▼ −11,5 kg</span> desde ago/25 · meta 85</div>
+      <div class="hg-value">90,4<span class="hg-unit">kg</span></div>
+      <div class="hg-sub"><span class="hg-delta-ok">▼ −11,4 kg</span> desde ago/25 · meta 85</div>
     </div>
     <div class="hero-card">
       <div class="hg-label">💪 % GORDURA</div>
@@ -355,8 +355,8 @@ details[open] summary::before{transform:rotate(90deg)}
     </div>
     <div class="card">
       <div class="card-label">⚖️ Peso — 7 dias</div>
-      <div class="card-value warn-c">90,3<span style="font-size:13px;color:var(--text-l)"> kg</span></div>
-      <div class="card-sub">Meta: 85 kg · faltam 5,3 kg</div>
+      <div class="card-value warn-c">90,4<span style="font-size:13px;color:var(--text-l)"> kg</span></div>
+      <div class="card-sub">Meta: 85 kg · faltam 5,4 kg</div>
       <div class="card-delta trend-up">↓ −1,1 kg vs sem. passada · 26/mar/2026</div>
     </div>
   </div>
@@ -386,7 +386,7 @@ details[open] summary::before{transform:rotate(90deg)}
         <tr class="tr-ok"><td class="td-h">TER</td><td>24/mar</td><td>🏃 T19 · Run/Walk 5,95 km Z2→Z3 · 47:25 · 7:18/km · FC 132 bpm · PSE 9/10 · 31,1°C</td><td><span class="badge b-ok">CONCLUÍDO</span></td></tr>
         <tr class="tr-ok"><td class="td-h">QUA</td><td>25/mar</td><td>🟢 Descanso ativo</td><td><span class="badge b-ok">DESCANSO</span></td></tr>
         <tr><td class="td-h">QUI</td><td>26/mar</td><td>—</td><td><span class="badge b-gray">PENDENTE</span></td></tr>
-        <tr><td class="td-h">SEX</td><td>27/mar</td><td>—</td><td><span class="badge b-gray">PENDENTE</span></td></tr>
+        <tr class="tr-ok"><td class="td-h">SEX</td><td>27/mar</td><td>🟢 Descanso ativo</td><td><span class="badge b-ok">DESCANSO</span></td></tr>
         <tr><td class="td-h">SÁB</td><td>28/mar</td><td>—</td><td><span class="badge b-gray">PENDENTE</span></td></tr>
       </tbody>
     </table>
@@ -424,7 +424,7 @@ details[open] summary::before{transform:rotate(90deg)}
       <div class="card-label">Progressão atual</div>
       <div style="margin-top:10px">
         <div class="prog-row"><div class="prog-label"><span>Long run (12,9/21,1 km)</span><span>61%</span></div><div class="prog-track"><div class="prog-fill pf-warn" style="width:61%"></div></div></div>
-        <div class="prog-row"><div class="prog-label"><span>Perda de peso (11,5/16,8 kg)</span><span>69%</span></div><div class="prog-track"><div class="prog-fill pf-warn" style="width:69%"></div></div></div>
+        <div class="prog-row"><div class="prog-label"><span>Perda de peso (11,4/16,8 kg)</span><span>68%</span></div><div class="prog-track"><div class="prog-fill pf-warn" style="width:68%"></div></div></div>
         <div class="prog-row"><div class="prog-label"><span>Treinos completos (19/22 prescritos)</span><span>86%</span></div><div class="prog-track"><div class="prog-fill pf-warn" style="width:86%"></div></div></div>
         <div class="prog-row"><div class="prog-label"><span>Cadência (134/165 ppm)</span><span>81%</span></div><div class="prog-track"><div class="prog-fill pf-warn" style="width:81%"></div></div></div>
         <div class="prog-row"><div class="prog-label"><span>Período até a prova</span><span id="pctProva">—</span></div><div class="prog-track"><div class="prog-fill pf-crit" id="barProva" style="width:0%"></div></div></div>
@@ -1069,7 +1069,7 @@ new Chart(document.getElementById('chartTiros'),{type:'bar',data:{labels:tiros.m
 
 new Chart(document.getElementById('chartCorrelacao'),{type:'scatter',data:{datasets:[{label:'Dados reais',data:[{x:6,y:140,id:'T7'},{x:8,y:133,id:'T4'},{x:7,y:129,id:'T12'}],backgroundColor:OLIVE+'cc',pointRadius:8,pointHoverRadius:10}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10}}},tooltip:{callbacks:{label:ctx=>`${ctx.raw.id||''}: PSE academia D-1: ${ctx.raw.x||'?'} · FC corrida: ${ctx.raw.y} bpm`}}},scales:{x:{min:0,max:10,title:{display:true,text:'PSE academia dia anterior'}},y:{min:100,max:175,title:{display:true,text:'FC média corrida (bpm)'}}}}});
 
-new Chart(document.getElementById('chartPeso'),{type:'line',data:{labels:['ago/25','set/25','out/25','nov/25','dez/25','jan/26','fev/26','mar/26'],datasets:[{label:'Peso',data:[101.8,103.5,102.5,100.1,98.2,96.6,94.2,90.3],borderColor:NAVY,backgroundColor:NAVY+'11',fill:true,tension:0.3,pointRadius:5},{label:'Meta 85kg',data:[85,85,85,85,85,85,85,85],borderColor:OK,borderDash:[5,3],pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10}}}},scales:{y:{min:80,max:110,ticks:{callback:v=>v+'kg'}}}}});
+new Chart(document.getElementById('chartPeso'),{type:'line',data:{labels:['ago/25','set/25','out/25','nov/25','dez/25','jan/26','fev/26','mar/26'],datasets:[{label:'Peso',data:[101.8,103.5,102.5,100.1,98.2,96.6,94.2,90.4],borderColor:NAVY,backgroundColor:NAVY+'11',fill:true,tension:0.3,pointRadius:5},{label:'Meta 85kg',data:[85,85,85,85,85,85,85,85],borderColor:OK,borderDash:[5,3],pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10}}}},scales:{y:{min:80,max:110,ticks:{callback:v=>v+'kg'}}}}});
 
 new Chart(document.getElementById('chartInBody'),{type:'line',data:{labels:['out/23','jan/24','abr/24','out/24','fev/26'],datasets:[{label:'Peso (kg)',data:[105.1,101.7,102.1,99.7,90.9],borderColor:NAVY,tension:0.3,pointRadius:5,yAxisID:'y'},{label:'Músculo (kg)',data:[40.7,40.3,41.5,41.3,39.5],borderColor:OLIVE,tension:0.3,pointRadius:5,yAxisID:'y'},{label:'% Gordura',data:[32.2,30.8,29.1,27.8,24.2],borderColor:WARN,borderDash:[4,2],tension:0.3,pointRadius:5,yAxisID:'y2'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:10}}}},scales:{y:{min:35,max:110,position:'left',ticks:{callback:v=>v+'kg'}},y2:{min:20,max:40,position:'right',grid:{drawOnChartArea:false},ticks:{callback:v=>v+'%'}}}}});
 
