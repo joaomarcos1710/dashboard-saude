@@ -331,11 +331,11 @@ details[open] summary::before{transform:rotate(90deg)}
 <div id="page-hoje" class="page active">
 
   <div class="next-card">
-    <div class="next-label">🎯 PRÓXIMO TREINO PRESCRITO — CICLO 2 (ABRIL/2026)</div>
-    <div class="next-title">CICLO 1 CONCLUÍDO — AGUARDANDO PRESCRIÇÃO CICLO 2</div>
+    <div class="next-label">🎯 PRÓXIMO TREINO — CICLO MEIA MARATONA DO RIO</div>
+    <div class="next-title">T21 · 5×600m Z4</div>
     <div class="next-meta">
-      <span>✅ 19/19 Ciclo 1 concluído + T20 concluído · 149,1 km acumulados</span>
-      <span>🔄 Ciclo 2 em andamento · próximos: T21 (5×600m) · T22 (long run 13km)</span>
+      <span>✅ T20 concluído · 149,1 km acumulados no ciclo</span>
+      <span>🔄 Ciclo em andamento · próximos: T21 (5×600m Z4) · T22 (long run 13km Z2/Z3)</span>
       <span>🏁 Meia Maratona do Rio · 06/jun/2026 · meta 2h45–3h00</span>
     </div>
   </div>
@@ -345,7 +345,7 @@ details[open] summary::before{transform:rotate(90deg)}
       <div class="card-label">🏃 Corrida — ciclo Meia Maratona</div>
       <div class="card-value olive">22/19</div>
       <div class="card-sub">20 concluídos · T21–T22 prescritos · 149,1 km</div>
-      <div class="card-delta trend-up">↑ Ciclo 1 100% · Ciclo 2 em andamento</div>
+      <div class="card-delta trend-up">↑ 20 treinos concluídos · 106 dias para a prova</div>
     </div>
     <div class="card">
       <div class="card-label">🏋️ Academia — semana atual</div>
@@ -392,7 +392,7 @@ details[open] summary::before{transform:rotate(90deg)}
     </table>
   </div>
 
-  <div class="section-title">PRÓXIMOS TREINOS PRESCRITOS — CICLO 2</div>
+  <div class="section-title">PRÓXIMOS TREINOS PRESCRITOS</div>
   <div class="tbl-wrap">
     <table>
       <thead><tr><th>TREINO</th><th>TIPO</th><th>AQUECIMENTO</th><th>SÉRIE PRINCIPAL</th><th>STATUS</th></tr></thead>
@@ -438,7 +438,7 @@ details[open] summary::before{transform:rotate(90deg)}
 
   <div class="section-title">KPIs DO CICLO — COM TENDÊNCIA</div>
   <div class="grid5">
-    <div class="card"><div class="card-label">Total km</div><div class="card-value olive">149,1+</div><div class="card-sub">ciclo Meia Maratona · 22 treinos no plano</div><div class="card-delta trend-up">↑ 20 concluídos · Ciclo 2 em andamento</div></div>
+    <div class="card"><div class="card-label">Total km</div><div class="card-value olive">149,1+</div><div class="card-sub">ciclo Meia Maratona · 22 treinos no plano</div><div class="card-delta trend-up">↑ 20 concluídos · faltam 106 dias</div></div>
     <div class="card"><div class="card-label">Long run máx</div><div class="card-value olive">12,9<span style="font-size:12px;color:var(--text-l)"> km</span></div><div class="card-sub">T18 · 19/mar/2026</div><div class="card-delta trend-up">↑ +2,9 km vs anterior</div></div>
     <div class="card"><div class="card-label">FC repouso</div><div class="card-value olive">51<span style="font-size:12px;color:var(--text-l)"> bpm</span></div><div class="card-sub">Nível de atleta treinado</div><div class="card-delta trend-up">↓ −4 bpm vs início do ciclo</div></div>
     <div class="card"><div class="card-label">Cadência máx</div><div class="card-value olive">165<span style="font-size:12px;color:var(--text-l)"> ppm</span></div><div class="card-sub">T16 · 14/mar · novo máximo</div><div class="card-delta trend-up">↑ +32 ppm vs T1</div></div>
@@ -875,13 +875,13 @@ function showPage(id, el) {
 
 /* ── ALERTAS ── */
 const ALERTAS = [
-  {nivel:'crit',icon:'❤️',titulo:'HDL 32 mg/dL persistente',meta:'jan/26 · Ref: >40 · Tendência: sem melhora desde jun/24',resumo:'Risco cardiovascular elevado. Baixo HDL combinado com triglicerídeos acima do limite (151 mg/dL) aumenta o risco cardiometabólico.',coach:'Considerar avaliação cardiológica antes de iniciar treinos em Z4/Z5 no ciclo 2.'},
+  {nivel:'crit',icon:'❤️',titulo:'HDL 32 mg/dL persistente',meta:'jan/26 · Ref: >40 · Tendência: sem melhora desde jun/24',resumo:'Risco cardiovascular elevado. Baixo HDL combinado com triglicerídeos acima do limite (151 mg/dL) aumenta o risco cardiometabólico.',coach:'Considerar avaliação cardiológica antes de intensificar treinos em Z4/Z5 nas próximas semanas.'},
   {nivel:'crit',icon:'🧬',titulo:'Beta-talassemia minor — ferritina 486 µg/L',meta:'Crônico · Ferritina acima do limite superior (446 µg/L)',resumo:'NÃO suplementar ferro. VO₂max estruturalmente 5–10% menor. Usar FC e PSE como guias principais.',coach:'Informar o coach sobre limitação estrutural de VO₂max. FC máxima pode estar limitada também pelo Neblock.'},
   {nivel:'crit',icon:'💊',titulo:'Ácido úrico 7,8 mg/dL — risco de gota',meta:'jan/26 · Ref: <7,0 · Tendência: 6,5→7,8 (subindo)',resumo:'Desidratação concentra ácido úrico — risco aumentado em treinos longos no calor. Evitar: vísceras, frutos do mar, cerveja.',coach:'Monitorar sinais de crise inflamatória articular pós-treino intenso. Checar com médico.'},
   {nivel:'warn',icon:'☀️',titulo:'Vitamina D 28 ng/mL — insuficiente',meta:'jan/26 · Ref atleta: 40–60 ng/mL · Consulta: 22/abr às 8h',resumo:'Vitamina D insuficiente afeta recuperação muscular, imunidade e absorção de cálcio.',coach:'Confirmar dose de suplementação com o endocrinologista na consulta de 22/abr.'},
   {nivel:'warn',icon:'💉',titulo:'Neblock (betabloqueador) + FC artificialmente limitada',meta:'Contínuo · Prescrição cardiológica',resumo:'Neblock limita FC máxima. Zonas de treino baseadas em FC podem estar subavaliadas. Monitorar por PSE e pace.',coach:'Usar RPE (escala de esforço percebido) em paralelo com FC nas sessões Z4/Z5.'},
   {nivel:'warn',icon:'⚖️',titulo:'Triglicerídeos 151 mg/dL — acima do limite',meta:'jan/26 · Ref: <150 · Subiu vs nov/25 (103→151)',resumo:'Pode estar relacionado à alimentação no período festivo. Exercício aeróbico regular tende a reduzir.',coach:'Solicitar novo painel lipídico em mai/2026 (pré-prova) para avaliar evolução.'},
-  {nivel:'info',icon:'✅',titulo:'Ciclo 2 em andamento — T20 concluído · 149,1 km',meta:'Meia Maratona do Rio · 06/jun/2026',resumo:'Ciclo 1 100% concluído (19/19 + 4 bônus). T20 (28/mar): Fundo Z2/Z3 6,79 km · 53:53 · 7:56/km · FC 136/157 bpm · Cad 130 ppm · PSE 6/10 · 30,7°C.',coach:'Próximos: T21 (5×600m Z4) e T22 (long run 13 km). Cadência 130 ppm — foco em elevar para 165+ nos treinos de Z2.'},
+  {nivel:'info',icon:'✅',titulo:'Ciclo Meia Maratona — T20 concluído · 149,1 km',meta:'Meia Maratona do Rio · 06/jun/2026',resumo:'19/19 treinos base + 4 bônus + T20 concluído. T20 (28/mar): Fundo Z2/Z3 6,79 km · 53:53 · 7:56/km · FC 136/157 bpm · Cad 130 ppm · PSE 6/10 · 30,7°C.',coach:'Próximos: T21 (5×600m Z4) e T22 (long run 13 km). Cadência 130 ppm — foco em elevar para 165+ nos treinos de Z2.'},
   {nivel:'info',icon:'💉',titulo:'Tirzepatida (Mounjaro) — planejar dias de injeção',meta:'Semanal · Pode causar náusea e queda de energia',resumo:'GLP-1 pode afetar energia e disposição. Injetar preferencialmente pós-treino ou em dia de descanso.',coach:'Comunicar ao coach qual dia da semana é o dia da injeção para ajuste de intensidade.'},
 ];
 
