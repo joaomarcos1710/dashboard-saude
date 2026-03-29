@@ -248,6 +248,14 @@ details[open] summary::before{transform:rotate(90deg)}
   .grid2,.grid3,.grid4,.grid5{grid-template-columns:1fr}
   .card-value{font-size:22px}
 }
+
+  /* ── HISTÓRICO DE SEMANAS ── */
+  .hist-btn{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:10px 14px;cursor:pointer;color:var(--text);font-size:12px;font-weight:600;margin-bottom:6px;transition:background .2s}
+  .hist-btn:hover{background:var(--card-hover)}
+  .hist-btn .hist-arrow{transition:transform .3s;font-size:10px;color:var(--text-l)}
+  .hist-btn.open .hist-arrow{transform:rotate(180deg)}
+  .hist-body{display:none;margin-bottom:10px}
+  .hist-body.open{display:block}
 </style>
 </head>
 <body>
@@ -376,21 +384,84 @@ details[open] summary::before{transform:rotate(90deg)}
     </div>
   </div>
 
-  <div class="section-title">SEMANA ATUAL — 22 A 28 MAR 2026</div>
+  <div class="section-title">SEMANA ATUAL — 29 MAR A 04 ABR 2026</div>
   <div class="tbl-wrap">
     <table>
       <thead><tr><th>DIA</th><th>DATA</th><th>ATIVIDADE</th><th>STATUS</th></tr></thead>
       <tbody>
-        <tr class="tr-ok"><td class="td-h">DOM</td><td>22/mar</td><td>🟢 Recuperação ativa (3 dias após long run 12,9 km)</td><td><span class="badge b-ok">DESCANSO</span></td></tr>
-        <tr><td class="td-h">SEG</td><td>23/mar</td><td>Body LJ — CrossFit · Superiores · 1:04:58 · PSE 9</td><td><span class="badge b-gym">MUSCULAÇÃO</span></td></tr>
-        <tr class="tr-ok"><td class="td-h">TER</td><td>24/mar</td><td>🏃 T19 · Run/Walk 5,95 km Z2→Z3 · 47:25 · 7:18/km · FC 132 bpm · PSE 9/10 · 31,1°C</td><td><span class="badge b-ok">CONCLUÍDO</span></td></tr>
-        <tr class="tr-ok"><td class="td-h">QUA</td><td>25/mar</td><td>🟢 Descanso ativo</td><td><span class="badge b-ok">DESCANSO</span></td></tr>
-        <tr class="tr-ok"><td class="td-h">QUI</td><td>26/mar</td><td>🟢 Descanso ativo</td><td><span class="badge b-ok">DESCANSO</span></td></tr>
-        <tr class="tr-ok"><td class="td-h">SEX</td><td>27/mar</td><td>🟢 Descanso ativo</td><td><span class="badge b-ok">DESCANSO</span></td></tr>
-        <tr class="tr-ok"><td class="td-h">SÁB</td><td>28/mar</td><td>🏃 T20 · Fundo Z2/Z3 6,79 km · 53:53 · 7:56/km · FC 136 bpm · PSE 6/10 · 30,7°C</td><td><span class="badge b-ok">CONCLUÍDO</span></td></tr>
         <tr class="tr-ok"><td class="td-h">DOM</td><td>29/mar</td><td>🟢 Descanso ativo</td><td><span class="badge b-ok">DESCANSO</span></td></tr>
+        <tr><td class="td-h">SEG</td><td>30/mar</td><td>—</td><td><span class="badge b-gray">PENDENTE</span></td></tr>
+        <tr><td class="td-h">TER</td><td>31/mar</td><td>—</td><td><span class="badge b-gray">PENDENTE</span></td></tr>
+        <tr><td class="td-h">QUA</td><td>01/abr</td><td>—</td><td><span class="badge b-gray">PENDENTE</span></td></tr>
+        <tr><td class="td-h">QUI</td><td>02/abr</td><td>—</td><td><span class="badge b-gray">PENDENTE</span></td></tr>
+        <tr><td class="td-h">SEX</td><td>03/abr</td><td>—</td><td><span class="badge b-gray">PENDENTE</span></td></tr>
+        <tr><td class="td-h">SÁB</td><td>04/abr</td><td>—</td><td><span class="badge b-gray">PENDENTE</span></td></tr>
       </tbody>
     </table>
+  </div>
+
+  <div class="section-title">SEMANAS ANTERIORES</div>
+  <div>
+    <button class="hist-btn" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+      <span>📅 Semana 22–28/mar/2026 · T19 + T20 concluídos · 12,74 km</span>
+      <span class="hist-arrow">▼</span>
+    </button>
+    <div class="hist-body">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>DIA</th><th>DATA</th><th>ATIVIDADE</th><th>STATUS</th></tr></thead>
+          <tbody>
+            <tr class="tr-ok"><td class="td-h">DOM</td><td>22/mar</td><td>🟢 Recuperação ativa (3 dias após long run 12,9 km)</td><td><span class="badge b-ok">DESCANSO</span></td></tr>
+            <tr><td class="td-h">SEG</td><td>23/mar</td><td>Body LJ — CrossFit · Superiores · 1:04:58 · PSE 9</td><td><span class="badge b-gym">MUSCULAÇÃO</span></td></tr>
+            <tr class="tr-ok"><td class="td-h">TER</td><td>24/mar</td><td>🏃 T19 · Run/Walk 5,95 km Z2→Z3 · 47:25 · 7:18/km · FC 132 bpm · PSE 9/10 · 31,1°C</td><td><span class="badge b-ok">CONCLUÍDO</span></td></tr>
+            <tr class="tr-ok"><td class="td-h">QUA</td><td>25/mar</td><td>🟢 Descanso ativo</td><td><span class="badge b-ok">DESCANSO</span></td></tr>
+            <tr class="tr-ok"><td class="td-h">QUI</td><td>26/mar</td><td>🟢 Descanso ativo</td><td><span class="badge b-ok">DESCANSO</span></td></tr>
+            <tr class="tr-ok"><td class="td-h">SEX</td><td>27/mar</td><td>🟢 Descanso ativo</td><td><span class="badge b-ok">DESCANSO</span></td></tr>
+            <tr class="tr-ok"><td class="td-h">SÁB</td><td>28/mar</td><td>🏃 T20 · Fundo Z2/Z3 6,79 km · 53:53 · 7:56/km · FC 136 bpm · PSE 6/10 · 30,7°C</td><td><span class="badge b-ok">CONCLUÍDO</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <button class="hist-btn" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+      <span>📅 Semana 15–21/mar/2026 · T17 + T18 concluídos · 18,47 km</span>
+      <span class="hist-arrow">▼</span>
+    </button>
+    <div class="hist-body">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>DIA</th><th>DATA</th><th>ATIVIDADE</th><th>STATUS</th></tr></thead>
+          <tbody>
+            <tr><td class="td-h">DOM</td><td>15/mar</td><td>—</td><td><span class="badge b-gray">—</span></td></tr>
+            <tr><td class="td-h">SEG</td><td>16/mar</td><td>—</td><td><span class="badge b-gray">—</span></td></tr>
+            <tr class="tr-ok"><td class="td-h">TER</td><td>17/mar</td><td>🏃 T17 · 3×1000m Z4 · 5,57 km · 8:41/km · FC 123 bpm · PSE 7/10 · 29,9°C</td><td><span class="badge b-ok">CONCLUÍDO</span></td></tr>
+            <tr><td class="td-h">QUA</td><td>18/mar</td><td>—</td><td><span class="badge b-gray">—</span></td></tr>
+            <tr class="tr-ok"><td class="td-h">QUI</td><td>19/mar</td><td>🏃 T18 · Long run 12,9 km Z2→Z3 · 8:25/km · FC 128 bpm · PSE 9/10 · 29,3°C</td><td><span class="badge b-ok">CONCLUÍDO</span></td></tr>
+            <tr><td class="td-h">SEX</td><td>20/mar</td><td>—</td><td><span class="badge b-gray">—</span></td></tr>
+            <tr><td class="td-h">SÁB</td><td>21/mar</td><td>—</td><td><span class="badge b-gray">—</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <button class="hist-btn" onclick="this.classList.toggle('open');this.nextElementSibling.classList.toggle('open')">
+      <span>📅 Semana 08–14/mar/2026 · T15 + T16 concluídos · 16,16 km</span>
+      <span class="hist-arrow">▼</span>
+    </button>
+    <div class="hist-body">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>DIA</th><th>DATA</th><th>ATIVIDADE</th><th>STATUS</th></tr></thead>
+          <tbody>
+            <tr><td class="td-h">DOM</td><td>08/mar</td><td>🏃 T15 · Long run 10 km · 8:11/km · FC 143 bpm · PSE 9/10 · 33,3°C</td><td><span class="badge b-ok">CONCLUÍDO</span></td></tr>
+            <tr><td class="td-h">SEG</td><td>09/mar</td><td>—</td><td><span class="badge b-gray">—</span></td></tr>
+            <tr><td class="td-h">TER</td><td>10/mar</td><td>—</td><td><span class="badge b-gray">—</span></td></tr>
+            <tr><td class="td-h">QUA</td><td>11/mar</td><td>—</td><td><span class="badge b-gray">—</span></td></tr>
+            <tr><td class="td-h">QUI</td><td>12/mar</td><td>—</td><td><span class="badge b-gray">—</span></td></tr>
+            <tr class="tr-ok"><td class="td-h">SEX</td><td>14/mar</td><td>🏃 T16 · 50min Z2 · 6,16 km · 8:07/km · FC 141 bpm · PSE 4/10 · 33,8°C</td><td><span class="badge b-ok">CONCLUÍDO</span></td></tr>
+            <tr><td class="td-h">SÁB</td><td>—</td><td>—</td><td><span class="badge b-gray">—</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <div class="section-title">PRÓXIMOS TREINOS PRESCRITOS</div>
