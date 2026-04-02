@@ -1068,7 +1068,7 @@ const ALERTAS = [
 function computeWeeklyKm() {
   const start = new Date('2025-12-15');
   const weeks = [];
-  for (let i=0; i<14; i++) {
+  for (let i=0; i<26; i++) {
     const ws = new Date(start); ws.setDate(start.getDate()+i*7);
     const we = new Date(ws); we.setDate(ws.getDate()+6);
     const km = TREINOS.filter(t=>{ const td=new Date(t.data); return td>=ws&&td<=we; }).reduce((s,t)=>s+t.dist,0);
