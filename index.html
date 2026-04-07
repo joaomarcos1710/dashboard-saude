@@ -614,6 +614,7 @@ details[open] summary::before{transform:rotate(90deg)}
     <table>
       <thead><tr><th>DATA</th><th>TIPO</th><th>FOCO</th><th>DURAÇÃO</th><th>PSE</th><th>STATUS</th></tr></thead>
       <tbody>
+        <tr><td>06/04/2026</td><td>CrossFit + Força</td><td>Full Body · 34 séries · 1.402 kg vol.</td><td>1:02:07</td><td>10</td><td>✓ Completo</td></tr>
         <tr><td>23/03/2026</td><td>CrossFit</td><td>Superiores</td><td>1:04:58</td><td>9</td><td>✓ Completo</td></tr>
       </tbody>
     </table>
@@ -842,6 +843,7 @@ details[open] summary::before{transform:rotate(90deg)}
       <tr><td>1km</td><td class="td-h td-mono">5:51</td><td>5:51/km</td><td>10,3 km/h</td><td><span class="badge b-info">CURTA</span></td></tr>
       <tr><td>5km</td><td class="td-h td-mono">35:08</td><td>7:02/km</td><td>8,5 km/h</td><td><span class="badge b-warn">MÉDIA</span></td></tr>
       <tr class="tr-ok"><td><strong>10km</strong></td><td class="td-h td-mono">1:12:55 <span class="badge b-ok" style="font-size:9px">PR</span></td><td>7:17/km</td><td>8,2 km/h</td><td><span class="badge b-ok">Circuito Caixa</span></td></tr>
+      <tr class="tr-ok"><td><strong>15km</strong></td><td class="td-h td-mono">2:08:21 <span class="badge b-ok" style="font-size:9px">PR</span></td><td>8:33/km</td><td>7,0 km/h</td><td><span class="badge b-ok">T22 · 05/abr/2026</span></td></tr>
       <tr style="background:var(--accent-bg)"><td><strong>Meia maratona</strong></td><td>🎯 06/JUN/2026</td><td>Meta: 7:50–8:30</td><td>—</td><td><span class="badge b-olive">EM PREPARAÇÃO</span></td></tr>
     </tbody>
   </table></div>
@@ -1172,7 +1174,7 @@ new Chart(document.getElementById('chartComp'),{type:'bar',data:{labels:['08/Fev
 
 new Chart(document.getElementById('chartDobras'),{type:'bar',data:{labels:['Tricipital','Bicipital','Abdominal','Subescap.','Axilar','Coxa','Torácica','Suprailíaca','Panturrilha'],datasets:[{label:'Fev/25',data:[12,7,32,33,20,11,16,28,10],backgroundColor:'rgba(185,28,28,.25)',borderRadius:3},{label:'Jul/25',data:[12,7,28,29.5,18,11,16,26.5,10],backgroundColor:'rgba(161,98,7,.35)',borderRadius:3},{label:'Mar/26',data:[11,6,22,27,13.5,11,15,15.25,9],backgroundColor:OLIVE,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10},boxWidth:10}}},scales:{x:{grid:{display:false},ticks:{font:{size:9}}},y:{grid:{color:'#f0f2f5'}}}}});
 
-new Chart(document.getElementById('chartPRs'),{type:'line',data:{labels:['400m','800m','1km','1 mi','5km','10km'],datasets:[{data:[283,333,351,363,422,437],borderColor:OLIVE,backgroundColor:OLIVE+'18',fill:true,tension:0.3,pointRadius:6,pointBackgroundColor:OLIVE}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{reverse:true,ticks:{callback:v=>{const m=Math.floor(v/60),s=v%60;return m+':'+(s<10?'0':'')+s;}}}}}});
+new Chart(document.getElementById('chartPRs'),{type:'line',data:{labels:['400m','800m','1km','1 mi','5km','10km','15km'],datasets:[{data:[283,333,351,363,422,437,513],borderColor:OLIVE,backgroundColor:OLIVE+'18',fill:true,tension:0.3,pointRadius:6,pointBackgroundColor:OLIVE}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{reverse:true,ticks:{callback:v=>{const m=Math.floor(v/60),s=v%60;return m+':'+(s<10?'0':'')+s;}}}}}});
 
 new Chart(document.getElementById('chartProvasEvolucao'),{type:'bar',data:{labels:['Inverno\n01/jun/25\n5K','Primavera\n21/set/25\n10km','Verão\n07/dez/25\n10km','Caixa\n14/dez/25\nPR','Meia\n06/jun/26\nMeta'],datasets:[{data:[466,511,469,437,480],backgroundColor:['#1d4ed8cc','#2d7a47cc','#a16207cc','#556b2fcc','#1d4ed844'],borderColor:['#1d4ed8','#2d7a47','#a16207','#556b2f','#1d4ed8'],borderWidth:2,borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>{const v=ctx.raw,m=Math.floor(v/60),s=v%60;return 'Pace: '+m+':'+(s<10?'0':'')+s+'/km';}}}},scales:{y:{reverse:true,min:400,max:540,ticks:{callback:v=>{const m=Math.floor(v/60),s=v%60;return m+':'+(s<10?'0':'')+s;}}}}}});
 </script>
