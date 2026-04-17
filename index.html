@@ -340,10 +340,10 @@ details[open] summary::before{transform:rotate(90deg)}
 
   <div class="next-card">
     <div class="next-label">🎯 PRÓXIMO TREINO — CICLO MEIA MARATONA DO RIO</div>
-    <div class="next-title">T26 · Fundo Z2 · 6,3 km</div>
+    <div class="next-title">T25 · Long Run Z2 · 12,2 km</div>
     <div class="next-meta">
       <span>✅ T24 concluído · 180,2 km no ciclo</span>
-      <span>🔄 Aquec. 6:00 + Corrida 40:00 (5km @ 8:00/km) + Desac. 5:00 · total 51:00</span>
+      <span>🔄 Aquec. 5:00 + 11km @ 8:00/km (FC 107–125 bpm) + Desac. 5:00 · total ~1:38:00</span>
       <span>🏁 Meia Maratona do Rio · 06/jun/2026 · meta 2h45–3h00 · faltam 50 dias</span>
     </div>
   </div>
@@ -352,7 +352,7 @@ details[open] summary::before{transform:rotate(90deg)}
     <div class="card">
       <div class="card-label">🏃 Corrida — ciclo Meia Maratona</div>
       <div class="card-value olive">24/27</div>
-      <div class="card-sub">24 concluídos · T26–T27 prescritos · 180,2 km</div>
+      <div class="card-sub">24 concluídos · T25–T27 prescritos · 180,2 km</div>
       <div class="card-delta trend-up">↑ 24/27 · faltam 50 dias para a prova</div>
     </div>
     <div class="card">
@@ -514,6 +514,7 @@ details[open] summary::before{transform:rotate(90deg)}
         <tr class="tr-ok"><td class="td-h">T22</td><td>Long Run Z2/Z3</td><td>—</td><td>15,03 km · 2:08:38 · 8:34/km · FC 138/161 bpm · Cad 124 ppm · 33,9°C · PR 15km!</td><td><span class="badge b-ok">CONCLUÍDO</span></td></tr>
         <tr class="tr-ok"><td class="td-h">T23</td><td>Fundo Z2</td><td>6:00 · Pace 8:20–9:00</td><td>5,03 km · 41:02 · 8:10/km · FC 121/151 bpm · Cad 116 ppm · 29,3°C</td><td><span class="badge b-ok">CONCLUÍDO</span></td></tr>
         <tr class="tr-ok"><td class="td-h">T24</td><td>Run/Walk Z2/Z3</td><td>—</td><td>5,92 km · 48:37 · 8:12/km · FC 123/152 bpm · Cad 128 ppm · 28,9°C · PSE 3/10</td><td><span class="badge b-ok">CONCLUÍDO</span></td></tr>
+        <tr><td class="td-h">T25</td><td>Long Run Z2</td><td>Aquec. 5:00 + Long Run 11km @ 8:00/km (FC 107–125 bpm) + Desac. 5:00</td><td>~12,2 km · ~1:38:00 · Pace 8:00/km (7:40–8:20) · Z2 controlado</td><td><span class="badge b-gray">PRESCRITO</span></td></tr>
         <tr><td class="td-h">T26</td><td>Fundo Z2</td><td>Aquec. 6:00 + Corrida 40:00 @ 8:00/km (7:40–8:20) + Desac. 5:00</td><td>~6,3 km · ~51:00 · Pace 8:00/km · Meta 4,8–5,2 km na corrida</td><td><span class="badge b-gray">PRESCRITO</span></td></tr>
         <tr><td class="td-h">T27</td><td>Intervalado Z4</td><td>Aquec. 10:00 + 2×100m Z2 + 2×100m Z3 + 1×100m Z4 + 5×1km Z4 + Desac. 5:00</td><td>5×1km · Pace 7:00/km · FC 142–159 bpm · Rec. 2:30 entre séries</td><td><span class="badge b-gray">PRESCRITO</span></td></tr>
       </tbody>
@@ -1004,7 +1005,7 @@ const ALERTAS = [
   {nivel:'warn',icon:'☀️',titulo:'Vitamina D 28 ng/mL — insuficiente',meta:'jan/26 · Ref atleta: 40–60 ng/mL · Consulta: 22/abr às 8h',resumo:'Vitamina D insuficiente afeta recuperação muscular, imunidade e absorção de cálcio.',coach:'Confirmar dose de suplementação com o endocrinologista na consulta de 22/abr.'},
   {nivel:'warn',icon:'💉',titulo:'Neblock (betabloqueador) + FC artificialmente limitada',meta:'Contínuo · Prescrição cardiológica',resumo:'Neblock limita FC máxima. Zonas de treino baseadas em FC podem estar subavaliadas. Monitorar por PSE e pace.',coach:'Usar RPE (escala de esforço percebido) em paralelo com FC nas sessões Z4/Z5.'},
   {nivel:'warn',icon:'⚖️',titulo:'Triglicerídeos 151 mg/dL — acima do limite',meta:'jan/26 · Ref: <150 · Subiu vs nov/25 (103→151)',resumo:'Pode estar relacionado à alimentação no período festivo. Exercício aeróbico regular tende a reduzir.',coach:'Solicitar novo painel lipídico em mai/2026 (pré-prova) para avaliar evolução.'},
-  {nivel:'info',icon:'✅',titulo:'Fase manutenção — T24 concluído · 180,2 km',meta:'Meia Maratona do Rio · 06/jun/2026',resumo:'T24 (12/abr): Run/Walk Z2/Z3 5,92 km · 48:37 · 8:12/km · FC 123/152 bpm · Cad 128 ppm · PSE 3/10 · 28,9°C. Descanso 13–17/abr · peso caiu de 92,6 → 90,2 kg. Faltam 50 dias para a prova.',coach:'Próximo: T26 Fundo Z2 (6,3 km · Pace 8:00/km) e T27 Intervalado 5×1km Z4. Cadência 128 ppm — foco em elevar para 165+. Peso em boa trajetória: faltam 5,2 kg para meta de 85 kg.'},
+  {nivel:'info',icon:'✅',titulo:'Fase manutenção — T24 concluído · 180,2 km',meta:'Meia Maratona do Rio · 06/jun/2026',resumo:'T24 (12/abr): Run/Walk Z2/Z3 5,92 km · 48:37 · 8:12/km · FC 123/152 bpm · Cad 128 ppm · PSE 3/10 · 28,9°C. Descanso 13–17/abr · peso caiu de 92,6 → 90,2 kg. Faltam 50 dias para a prova.',coach:'Próximo: T25 Long Run 12,2 km Z2 (FC 107–125 bpm) — maior desafio antes da prova. Depois: T26 Fundo Z2 6,3 km e T27 Intervalado 5×1km Z4. Cadência 128 ppm — foco em elevar para 165+. Peso em boa trajetória: faltam 5,2 kg para meta de 85 kg.'},
   {nivel:'info',icon:'💉',titulo:'Tirzepatida (Mounjaro) — planejar dias de injeção',meta:'Semanal · Pode causar náusea e queda de energia',resumo:'GLP-1 pode afetar energia e disposição. Injetar preferencialmente pós-treino ou em dia de descanso.',coach:'Comunicar ao coach qual dia da semana é o dia da injeção para ajuste de intensidade.'},
 ];
 
