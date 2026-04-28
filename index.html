@@ -1117,7 +1117,6 @@ const ALERTAS = [
   const totalKm = TREINOS.reduce((s,t)=>s+t.dist,0);
   const shoes = [
     {nome:'Asics Nimbus 25 (principal)', km:Math.round(totalKm*10)/10, limite:600, comprado:'dez/2025'},
-    {nome:'Nike Pegasus 40 ❌ Aposentado', km:500, limite:500, comprado:'out/2025 · doado · todas as corridas no Nimbus 25'},
   ];
   const c = document.getElementById('shoeOdometer'); if (!c) return;
   let html = '<div class="shoe-card">';
@@ -1134,6 +1133,7 @@ const ALERTAS = [
       <div class="shoe-meta">${pct}% do limite (${s.limite} km) ${alerta?'· '+alerta:''}</div>
     </div>`;
   });
+  html += '<div class="shoe-item" style="opacity:0.45"><div class="shoe-header"><div><div class="shoe-name">👟 Nike Pegasus 40 — Aposentado</div><div style="font-size:10px;color:var(--text-l);margin-top:2px">Comprado out/2025 · doado · substituído pelo Nimbus 25</div></div></div></div>';
   html += '</div>';
   c.innerHTML = html;
 })();
